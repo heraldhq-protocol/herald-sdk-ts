@@ -1,0 +1,218 @@
+import { PublicKey } from '@solana/web3.js';
+import { BaseClient } from './base.js';
+import { findIdentityPda, findProtocolPda } from '../pda/index.js';
+import { HeraldError } from '../errors/index.js';
+import { hashWalletAddress } from '../utils/recipient-hash.js';
+import { TIER_METADATA } from '../types/accounts.js';
+import type { IdentityAccount, ProtocolRegistryAccount } from '../types/accounts.js';
+import type { LightReceiptResponse } from '../types/light.js';
+import type { HeraldConfig } from '../types/config.js';
+
+/**
+ * ReadClient — account fetching and event subscriptions.
+ * No signing required. Safe for browser use.
+ */
+export class ReadClient extends BaseClient {
+    constructor(config: HeraldConfig) {
+        super(config);
+    }
+
+    /**
+     * Fetch IdentityAccount for a given wallet pubkey.
+     * Returns null if the account does not exist (wallet not registered).
+     */
+    async fetchIdentityAccount(
+        owner: PublicKey,
+    ): Promise<IdentityAccount | null> {
+        const [pda] = findIdentityPda(owner, new PublicKey(this.config.programId));
+        try {
+            const raw = await (this.program.account as any).identityAccount.fetch(
+                pda,
+                this.config.commitment,
+            );
+            return deserializeIdentityAccount(raw);
+        } catch (err) {
+            if (isAccountNotFoundError(err)) return null;
+            throw HeraldError.fromAnchorError(err);
+        }
+    }
+
+    /**
+     * Fetch ProtocolRegistryAccount for a given protocol wallet pubkey.
+     */
+    async fetchProtocolAccount(
+        protocolOwner: PublicKey,
+    ): Promise<ProtocolRegistryAccount | null> {
+        const [pda] = findProtocolPda(
+            protocolOwner,
+            new PublicKey(this.config.programId),
+        );
+        try {
+            const raw = await (this.program.account as any).protocolRegistryAccount.fetch(
+                pda,
+                this.config.commitment,
+            );
+            return deserializeProtocolAccount(raw);
+        } catch (err) {
+            if (isAccountNotFoundError(err)) return null;
+            throw HeraldError.fromAnchorError(err);
+        }
+    }
+
+    /**
+     * Check if a wallet is registered in the Herald Privacy Registry.
+     * Efficient: only checks account existence, does not deserialise.
+     */
+    async isRegistered(owner: PublicKey): Promise<boolean> {
+        const [pda] = findIdentityPda(owner, new PublicKey(this.config.programId));
+        const info = await this.connection.getAccountInfo(pda, this.config.commitment);
+        return info !== null;
+    }
+
+    /**
+     * Fetch multiple IdentityAccounts in a single RPC call.
+     * Returns a Map<base58_pubkey, IdentityAccount | null>.
+     */
+    async fetchIdentityAccountBatch(
+        owners: PublicKey[],
+    ): Promise<Map<string, IdentityAccount | null>> {
+        const programId = new PublicKey(this.config.programId);
+        const pdas = owners.map((o) => findIdentityPda(o, programId)[0]);
+
+        const accounts = await (this.program.account as any).identityAccount.fetchMultiple(
+            pdas,
+            this.config.commitment,
+        );
+
+        return new Map(
+            owners.map((owner, i) => [
+                owner.toBase58(),
+                accounts[i] ? deserializeIdentityAccount(accounts[i]!) : null,
+            ]),
+        );
+    }
+
+    /**
+     * Check protocol eligibility to send notifications.
+     * Mirrors the on-chain can_send() helper method.
+     */
+    async checkProtocolCanSend(
+        protocolOwner: PublicKey,
+    ): Promise<{
+        canSend: boolean;
+        reason?: string;
+        sendsRemaining?: bigint;
+        expiresAt?: Date;
+    }> {
+        const account = await this.fetchProtocolAccount(protocolOwner);
+
+        if (!account) return { canSend: false, reason: 'Protocol not registered' };
+        if (account.isSuspended) return { canSend: false, reason: 'Protocol suspended by Herald' };
+        if (!account.isActive) return { canSend: false, reason: 'Protocol is not active' };
+
+        const now = BigInt(Math.floor(Date.now() / 1000));
+
+        if (account.subscriptionExpiresAt === 0n) {
+            return { canSend: false, reason: 'No active subscription' };
+        }
+        if (account.subscriptionExpiresAt <= now) {
+            return {
+                canSend: false,
+                reason: 'Subscription expired',
+                expiresAt: new Date(Number(account.subscriptionExpiresAt) * 1000),
+            };
+        }
+
+        const limit = TIER_METADATA[account.tier].sendsLimit;
+        const remaining = limit - account.sendsThisPeriod;
+
+        if (remaining <= 0n) {
+            return {
+                canSend: false,
+                reason: `Send limit reached (${limit.toString()} sends/period for ${TIER_METADATA[account.tier].name} tier)`,
+                sendsRemaining: 0n,
+            };
+        }
+
+        return {
+            canSend: true,
+            sendsRemaining: remaining,
+            expiresAt: new Date(Number(account.subscriptionExpiresAt) * 1000),
+        };
+    }
+
+    /**
+     * Fetch delivery receipts for a recipient wallet from the
+     * Light Protocol Photon indexer.
+     */
+    async fetchReceiptsForWallet(
+        recipientWallet: PublicKey,
+        _options?: { limit?: number; cursor?: string },
+    ): Promise<LightReceiptResponse> {
+        const _recipientHash = await hashWalletAddress(recipientWallet);
+        // Light Protocol receipt fetching via Photon indexer.
+        // Implementation depends on the @lightprotocol/stateless.js Rpc API.
+        // Placeholder — returns empty until Light RPC integration is complete.
+        return { receipts: [], total: 0 };
+    }
+
+    /**
+     * Fetch all receipts sent by a specific protocol.
+     */
+    async fetchReceiptsByProtocol(
+        _protocolOwner: PublicKey,
+        _options?: { limit?: number; cursor?: string },
+    ): Promise<LightReceiptResponse> {
+        // Light Protocol receipt fetching via Photon indexer.
+        // Placeholder — returns empty until Light RPC integration is complete.
+        return { receipts: [], total: 0 };
+    }
+}
+
+// ── Account Deserialization Helpers ───────────────────────────────
+
+function deserializeIdentityAccount(raw: any): IdentityAccount {
+    return {
+        owner: raw.owner as PublicKey,
+        encryptedEmail: Uint8Array.from(raw.encryptedEmail ?? raw.encrypted_email ?? []),
+        emailHash: Uint8Array.from(raw.emailHash ?? raw.email_hash ?? []),
+        nonce: Uint8Array.from(raw.nonce ?? []),
+        registeredAt: BigInt(raw.registeredAt ?? raw.registered_at ?? 0),
+        optInAll: raw.optInAll ?? raw.opt_in_all ?? false,
+        optInDefi: raw.optInDefi ?? raw.opt_in_defi ?? false,
+        optInGovernance: raw.optInGovernance ?? raw.opt_in_governance ?? false,
+        optInMarketing: raw.optInMarketing ?? raw.opt_in_marketing ?? false,
+        digestMode: raw.digestMode ?? raw.digest_mode ?? false,
+        bump: raw.bump ?? 0,
+    };
+}
+
+function deserializeProtocolAccount(raw: any): ProtocolRegistryAccount {
+    return {
+        owner: raw.owner as PublicKey,
+        nameHash: Uint8Array.from(raw.nameHash ?? raw.name_hash ?? []),
+        tier: raw.tier ?? 0,
+        subscriptionExpiresAt: BigInt(raw.subscriptionExpiresAt ?? raw.subscription_expires_at ?? 0),
+        lastRenewedAt: BigInt(raw.lastRenewedAt ?? raw.last_renewed_at ?? 0),
+        periodsPaid: raw.periodsPaid ?? raw.periods_paid ?? 0,
+        sendsThisPeriod: BigInt(raw.sendsThisPeriod ?? raw.sends_this_period ?? 0),
+        isActive: raw.isActive ?? raw.is_active ?? false,
+        isSuspended: raw.isSuspended ?? raw.is_suspended ?? false,
+        registeredAt: BigInt(raw.registeredAt ?? raw.registered_at ?? 0),
+        bump: raw.bump ?? 0,
+    };
+}
+
+/** Check if an error is an "Account does not exist" error from Anchor. */
+function isAccountNotFoundError(err: unknown): boolean {
+    if (err instanceof Error) {
+        const msg = err.message.toLowerCase();
+        return (
+            msg.includes('account does not exist') ||
+            msg.includes('could not find') ||
+            msg.includes('has not been found') ||
+            msg.includes('account not found')
+        );
+    }
+    return false;
+}

@@ -1,0 +1,97 @@
+{
+  "name": "@herald-protocol/sdk",
+  "version": "1.0.0-beta.1",
+  "description": "TypeScript SDK for the Herald Privacy Registry Anchor program",
+  "license": "MIT",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs",
+      "types": "./dist/index.d.ts"
+    },
+    "./user": {
+      "import": "./dist/clients/user.js",
+      "require": "./dist/clients/user.cjs",
+      "types": "./dist/clients/user.d.ts"
+    },
+    "./authority": {
+      "import": "./dist/clients/authority.js",
+      "require": "./dist/clients/authority.cjs",
+      "types": "./dist/clients/authority.d.ts"
+    },
+    "./read": {
+      "import": "./dist/clients/read.js",
+      "require": "./dist/clients/read.cjs",
+      "types": "./dist/clients/read.d.ts"
+    },
+    "./encryption": {
+      "import": "./dist/encryption/index.js",
+      "require": "./dist/encryption/index.cjs",
+      "types": "./dist/encryption/index.d.ts"
+    },
+    "./pda": {
+      "import": "./dist/pda/index.js",
+      "require": "./dist/pda/index.cjs",
+      "types": "./dist/pda/index.d.ts"
+    },
+    "./types": {
+      "types": "./dist/types/index.d.ts"
+    },
+    "./errors": {
+      "import": "./dist/errors/index.js",
+      "require": "./dist/errors/index.cjs",
+      "types": "./dist/errors/index.d.ts"
+    },
+    "./events": {
+      "import": "./dist/events/index.js",
+      "require": "./dist/events/index.cjs",
+      "types": "./dist/events/index.d.ts"
+    },
+    "./light": {
+      "import": "./dist/light/index.js",
+      "require": "./dist/light/index.cjs",
+      "types": "./dist/light/index.d.ts"
+    }
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "files": [
+    "dist/**",
+    "README.md",
+    "CHANGELOG.md"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "lint": "eslint src/",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@coral-xyz/anchor": "^0.30.1",
+    "@lightprotocol/stateless.js": "^0.17.1",
+    "@solana/web3.js": "^1.95.4",
+    "bs58": "^6.0.0",
+    "ed2curve": "^0.3.0",
+    "eventemitter3": "^5.0.1",
+    "tweetnacl": "^1.0.3",
+    "tweetnacl-util": "^0.15.1",
+    "uuid": "^10.0.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.0",
+    "@types/uuid": "^10.0.0",
+    "tsup": "^8.1.0",
+    "typescript": "^5.4.0",
+    "vitest": "^1.6.0"
+  }
+}

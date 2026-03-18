@@ -1,0 +1,11 @@
+// ── Instruction Builders Barrel ───────────────────────────────────
+export { buildRegisterIdentityIx } from './identity/register.js';
+export { buildUpdateIdentityIx } from './identity/update.js';
+export { buildDeleteIdentityIx } from './identity/delete.js';
+export { buildRegisterProtocolIx } from './protocol/register.js';
+export { buildDeactivateProtocolIx } from './protocol/deactivate.js';
+export { buildReactivateProtocolIx } from './protocol/reactivate.js';
+export { buildSuspendProtocolIx } from './protocol/suspend.js';
+export { buildRenewSubscriptionIx } from './billing/renew.js';
+export { buildResetProtocolSendsIx } from './billing/reset-sends.js';
+export { buildWriteReceiptIx } from './receipt/write.js';
