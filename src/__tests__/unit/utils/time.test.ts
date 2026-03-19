@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { dateToUnix, unixToDate, nowUnix, isExpired } from '../../utils/time.js';
+import { dateToUnix, unixToDate, nowUnix, isExpired } from '../../../utils/time.js';
 
 describe('Utils - time', () => {
     describe('dateToUnix', () => {

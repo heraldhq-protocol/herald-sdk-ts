@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { UserClient } from '../../clients/user.js';
+import { UserClient } from '../../../clients/user.js';
 import { PublicKey, TransactionInstruction } from '@solana/web3.js';
-import { HERALD_PROGRAM_ID } from '../../constants.js';
+import { HERALD_PROGRAM_ID } from '../../../constants.js';
 
 describe('Clients - UserClient', () => {
     const config = { rpcUrl: 'http://localhost:8899' };

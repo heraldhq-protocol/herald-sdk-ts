@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { AuthorityClient } from '../../clients/authority.js';
+import { AuthorityClient } from '../../../clients/authority.js';
 import { PublicKey, TransactionInstruction } from '@solana/web3.js';
-import { HERALD_PROGRAM_ID, HERALD_AUTHORITY } from '../../constants.js';
-import { PROTOCOL_TIERS, NOTIFICATION_CATEGORIES } from '../../types/accounts.js';
+import { HERALD_PROGRAM_ID, HERALD_AUTHORITY } from '../../../constants.js';
+import { PROTOCOL_TIERS, NOTIFICATION_CATEGORIES } from '../../../types/accounts.js';
 
 describe('Clients - AuthorityClient', () => {
     const config = { rpcUrl: 'http://localhost:8899' };

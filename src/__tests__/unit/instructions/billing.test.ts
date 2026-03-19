@@ -1,9 +1,9 @@
 import { describe, it, expect, vi } from 'vitest';
 import { PublicKey } from '@solana/web3.js';
-import { buildRenewSubscriptionIx } from '../../instructions/billing/renew.js';
-import { buildResetProtocolSendsIx } from '../../instructions/billing/reset-sends.js';
-import { findProtocolPda } from '../../pda/protocol.js';
-import { HERALD_PROGRAM_ID, HERALD_AUTHORITY } from '../../constants.js';
+import { buildRenewSubscriptionIx } from '../../../instructions/billing/renew.js';
+import { buildResetProtocolSendsIx } from '../../../instructions/billing/reset-sends.js';
+import { findProtocolPda } from '../../../pda/protocol.js';
+import { HERALD_PROGRAM_ID, HERALD_AUTHORITY } from '../../../constants.js';
 import type { Program } from '@coral-xyz/anchor';
 
 describe('Instructions - Billing', () => {

@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { ReadClient } from '../../clients/read.js';
+import { ReadClient } from '../../../clients/read.js';
 import { PublicKey } from '@solana/web3.js';
-import { ProtocolTier, PROTOCOL_TIERS } from '../../types/accounts.js';
+import { ProtocolTier, PROTOCOL_TIERS } from '../../../types/accounts.js';
 
 describe('Clients - ReadClient', () => {
     let client: ReadClient;

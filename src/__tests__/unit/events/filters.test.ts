@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { PublicKey } from '@solana/web3.js';
-import { matchesFilter } from '../../events/filters.js';
-import { ProtocolTier, NOTIFICATION_CATEGORIES } from '../../types/accounts.js';
+import { matchesFilter } from '../../../events/filters.js';
+import { ProtocolTier, NOTIFICATION_CATEGORIES } from '../../../types/accounts.js';
 
 describe('Events - filters', () => {
     const mockIdentityEvent: any = {

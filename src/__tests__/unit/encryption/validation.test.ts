@@ -5,9 +5,9 @@ import {
     validateEmailHash,
     validateCategory,
     validateTier
-} from '../../encryption/validation.js';
-import { HeraldError } from '../../errors/index.js';
-import { PROTOCOL_TIERS, NOTIFICATION_CATEGORIES } from '../../types/accounts.js';
+} from '../../../encryption/validation.js';
+import { HeraldError } from '../../../errors/index.js';
+import { PROTOCOL_TIERS, NOTIFICATION_CATEGORIES } from '../../../types/accounts.js';
 
 describe('Encryption - validation', () => {
     describe('validateEncryptedEmail', () => {

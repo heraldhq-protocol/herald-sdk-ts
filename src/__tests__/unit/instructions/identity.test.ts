@@ -1,10 +1,10 @@
 import { describe, it, expect, vi } from 'vitest';
 import { PublicKey, SystemProgram } from '@solana/web3.js';
-import { buildRegisterIdentityIx } from '../../instructions/identity/register.js';
-import { buildUpdateIdentityIx } from '../../instructions/identity/update.js';
-import { buildDeleteIdentityIx } from '../../instructions/identity/delete.js';
-import { findIdentityPda } from '../../pda/identity.js';
-import { HERALD_PROGRAM_ID } from '../../constants.js';
+import { buildRegisterIdentityIx } from '../../../instructions/identity/register.js';
+import { buildUpdateIdentityIx } from '../../../instructions/identity/update.js';
+import { buildDeleteIdentityIx } from '../../../instructions/identity/delete.js';
+import { findIdentityPda } from '../../../pda/identity.js';
+import { HERALD_PROGRAM_ID } from '../../../constants.js';
 import type { Program } from '@coral-xyz/anchor';
 
 describe('Instructions - Identity', () => {

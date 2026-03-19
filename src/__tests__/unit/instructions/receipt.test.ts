@@ -1,9 +1,9 @@
 import { describe, it, expect, vi } from 'vitest';
 import { PublicKey } from '@solana/web3.js';
-import { buildWriteReceiptIx } from '../../instructions/receipt/write.js';
-import { findProtocolPda } from '../../pda/protocol.js';
-import { HERALD_PROGRAM_ID, HERALD_AUTHORITY } from '../../constants.js';
-import { NOTIFICATION_CATEGORIES } from '../../types/accounts.js';
+import { buildWriteReceiptIx } from '../../../instructions/receipt/write.js';
+import { findProtocolPda } from '../../../pda/protocol.js';
+import { HERALD_PROGRAM_ID, HERALD_AUTHORITY } from '../../../constants.js';
+import { NOTIFICATION_CATEGORIES } from '../../../types/accounts.js';
 import type { Program } from '@coral-xyz/anchor';
 
 describe('Instructions - Receipt', () => {

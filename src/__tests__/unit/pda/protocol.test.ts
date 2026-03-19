@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { PublicKey } from '@solana/web3.js';
-import { findProtocolPda } from '../../pda/protocol.js';
-import { HERALD_PROGRAM_ID } from '../../constants.js';
+import { findProtocolPda } from '../../../pda/protocol.js';
+import { HERALD_PROGRAM_ID } from '../../../constants.js';
 
 describe('PDA - protocol', () => {
     it('should correctly derive the protocol registry PDA', () => {

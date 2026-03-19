@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { PublicKey } from '@solana/web3.js';
-import { findIdentityPda, createIdentityPda } from '../../pda/identity.js';
-import { HERALD_PROGRAM_ID } from '../../constants.js';
+import { findIdentityPda, createIdentityPda } from '../../../pda/identity.js';
+import { HERALD_PROGRAM_ID } from '../../../constants.js';
 
 describe('PDA - identity', () => {
     it('should correctly derive the identity PDA with fixed seeds', () => {

@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { hashEmail } from '../../encryption/hashing.js';
-import { toHex } from '../../utils/bytes.js';
+import { hashEmail } from '../../../encryption/hashing.js';
+import { toHex } from '../../../utils/bytes.js';
 
 describe('Encryption - hashing', () => {
     it('should correctly hash an email using SHA-256', async () => {

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { toHex, fromHex, toBase58, fromBase58 } from '../../utils/bytes.js';
+import { toHex, fromHex, toBase58, fromBase58 } from '../../../utils/bytes.js';
 import bs58 from 'bs58';
 
 describe('Utils - bytes', () => {

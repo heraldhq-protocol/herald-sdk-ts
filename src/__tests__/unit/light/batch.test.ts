@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { Keypair, PublicKey } from '@solana/web3.js';
-import { ReceiptBatchProcessor } from '../../light/batch.js';
-import { NOTIFICATION_CATEGORIES } from '../../types/accounts.js';
+import { ReceiptBatchProcessor } from '../../../light/batch.js';
+import { NOTIFICATION_CATEGORIES } from '../../../types/accounts.js';
 
 vi.mock('@solana/web3.js', async (importOriginal) => {
     const actual = await importOriginal<typeof import('@solana/web3.js')>();

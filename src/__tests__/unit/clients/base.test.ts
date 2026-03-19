@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { BaseClient, ResolvedHeraldConfig } from '../../clients/base.js';
-import { HERALD_PROGRAM_ID } from '../../constants.js';
+import { BaseClient, ResolvedHeraldConfig } from '../../../clients/base.js';
+import { HERALD_PROGRAM_ID } from '../../../constants.js';
 
 // Simple concrete implementation to test the abstract BaseClient
 class TestClient extends BaseClient { }

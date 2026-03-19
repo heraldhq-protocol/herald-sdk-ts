@@ -1,12 +1,12 @@
 import { describe, it, expect, vi } from 'vitest';
 import { PublicKey, SystemProgram } from '@solana/web3.js';
-import { buildRegisterProtocolIx } from '../../instructions/protocol/register.js';
-import { buildDeactivateProtocolIx } from '../../instructions/protocol/deactivate.js';
-import { buildReactivateProtocolIx } from '../../instructions/protocol/reactivate.js';
-import { buildSuspendProtocolIx } from '../../instructions/protocol/suspend.js';
-import { findProtocolPda } from '../../pda/protocol.js';
-import { HERALD_PROGRAM_ID, HERALD_AUTHORITY } from '../../constants.js';
-import { ProtocolTier, PROTOCOL_TIERS } from '../../types/accounts.js';
+import { buildRegisterProtocolIx } from '../../../instructions/protocol/register.js';
+import { buildDeactivateProtocolIx } from '../../../instructions/protocol/deactivate.js';
+import { buildReactivateProtocolIx } from '../../../instructions/protocol/reactivate.js';
+import { buildSuspendProtocolIx } from '../../../instructions/protocol/suspend.js';
+import { findProtocolPda } from '../../../pda/protocol.js';
+import { HERALD_PROGRAM_ID, HERALD_AUTHORITY } from '../../../constants.js';
+import { ProtocolTier, PROTOCOL_TIERS } from '../../../types/accounts.js';
 import type { Program } from '@coral-xyz/anchor';
 
 describe('Instructions - Protocol', () => {

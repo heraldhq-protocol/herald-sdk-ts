@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { generateNotificationId, uuidToBytes, bytesToUuid } from '../../utils/notification-id.js';
+import { generateNotificationId, uuidToBytes, bytesToUuid } from '../../../utils/notification-id.js';
 
 describe('Utils - notification-id', () => {
     describe('generateNotificationId', () => {

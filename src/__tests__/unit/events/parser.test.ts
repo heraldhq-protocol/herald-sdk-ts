@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { PublicKey } from '@solana/web3.js';
-import { parseHeraldEvent } from '../../events/parser.js';
+import { parseHeraldEvent } from '../../../events/parser.js';
 
 describe('Events - parser', () => {
     it('should parse IdentityRegistered event correctly', () => {

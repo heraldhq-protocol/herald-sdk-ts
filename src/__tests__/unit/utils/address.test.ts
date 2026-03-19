@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { truncateAddress, isValidPubkey } from '../../utils/address.js';
+import { truncateAddress, isValidPubkey } from '../../../utils/address.js';
 import { PublicKey, Keypair } from '@solana/web3.js';
 
 describe('Utils - address', () => {

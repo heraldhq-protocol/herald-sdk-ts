@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { PublicKey } from '@solana/web3.js';
-import { HeraldEventListener } from '../../events/listener.js';
+import { HeraldEventListener } from '../../../events/listener.js';
 import type { Program } from '@coral-xyz/anchor';
 
 describe('Events - listener', () => {

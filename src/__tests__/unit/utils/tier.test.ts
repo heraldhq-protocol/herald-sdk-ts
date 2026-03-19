@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { getTierName, getSendsLimit, getSendsRemaining, parseTier } from '../../utils/tier.js';
-import { PROTOCOL_TIERS } from '../../types/accounts.js';
-import { HeraldError } from '../../errors/index.js';
+import { getTierName, getSendsLimit, getSendsRemaining, parseTier } from '../../../utils/tier.js';
+import { PROTOCOL_TIERS } from '../../../types/accounts.js';
+import { HeraldError } from '../../../errors/index.js';
 
 describe('Utils - tier', () => {
     describe('getTierName', () => {

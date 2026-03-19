@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { hashWalletAddress } from '../../utils/recipient-hash.js';
+import { hashWalletAddress } from '../../../utils/recipient-hash.js';
 import { Keypair } from '@solana/web3.js';
 
 describe('Utils - recipient-hash', () => {

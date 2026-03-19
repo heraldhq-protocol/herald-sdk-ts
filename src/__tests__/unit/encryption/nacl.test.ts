@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { Keypair } from '@solana/web3.js';
-import { encryptEmail, decryptEmail } from '../../encryption/nacl.js';
-import { HeraldError } from '../../errors/index.js';
+import { encryptEmail, decryptEmail } from '../../../encryption/nacl.js';
+import { HeraldError } from '../../../errors/index.js';
 import nacl from 'tweetnacl';
 
 describe('Encryption - email encryption (nacl)', () => {

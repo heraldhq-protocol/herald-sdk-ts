@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { deriveX25519FromEd25519, deriveX25519SecretFromEd25519 } from '../../encryption/conversion.js';
-import { HeraldError } from '../../errors/index.js';
+import { deriveX25519FromEd25519, deriveX25519SecretFromEd25519 } from '../../../encryption/conversion.js';
+import { HeraldError } from '../../../errors/index.js';
 import ed2curve from 'ed2curve';
 import nacl from 'tweetnacl';
 
