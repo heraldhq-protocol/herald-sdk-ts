@@ -7,11 +7,11 @@ Herald is an on-chain registry for privacy-preserving email delivery, allowing u
 ## Installation
 
 ```bash
-npm install @herald-protocol/sdk @solana/web3.js @coral-xyz/anchor @lightprotocol/stateless.js
+npm install @herald-protocol/sdk
 # or
-yarn add @herald-protocol/sdk @solana/web3.js @coral-xyz/anchor @lightprotocol/stateless.js
+yarn add @herald-protocol/sdk
 # or
-pnpm add @herald-protocol/sdk @solana/web3.js @coral-xyz/anchor @lightprotocol/stateless.js
+pnpm add @herald-protocol/sdk
 ```
 
 ## SDK Architecture
