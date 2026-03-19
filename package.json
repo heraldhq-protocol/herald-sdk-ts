@@ -7,52 +7,52 @@
   "sideEffects": false,
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
-      "require": "./dist/index.cjs",
-      "types": "./dist/index.d.ts"
+      "require": "./dist/index.cjs"
     },
     "./user": {
+      "types": "./dist/clients/user.d.ts",
       "import": "./dist/clients/user.js",
-      "require": "./dist/clients/user.cjs",
-      "types": "./dist/clients/user.d.ts"
+      "require": "./dist/clients/user.cjs"
     },
     "./authority": {
+      "types": "./dist/clients/authority.d.ts",
       "import": "./dist/clients/authority.js",
-      "require": "./dist/clients/authority.cjs",
-      "types": "./dist/clients/authority.d.ts"
+      "require": "./dist/clients/authority.cjs"
     },
     "./read": {
+      "types": "./dist/clients/read.d.ts",
       "import": "./dist/clients/read.js",
-      "require": "./dist/clients/read.cjs",
-      "types": "./dist/clients/read.d.ts"
+      "require": "./dist/clients/read.cjs"
     },
     "./encryption": {
+      "types": "./dist/encryption/index.d.ts",
       "import": "./dist/encryption/index.js",
-      "require": "./dist/encryption/index.cjs",
-      "types": "./dist/encryption/index.d.ts"
+      "require": "./dist/encryption/index.cjs"
     },
     "./pda": {
+      "types": "./dist/pda/index.d.ts",
       "import": "./dist/pda/index.js",
-      "require": "./dist/pda/index.cjs",
-      "types": "./dist/pda/index.d.ts"
+      "require": "./dist/pda/index.cjs"
     },
     "./types": {
       "types": "./dist/types/index.d.ts"
     },
     "./errors": {
+      "types": "./dist/errors/index.d.ts",
       "import": "./dist/errors/index.js",
-      "require": "./dist/errors/index.cjs",
-      "types": "./dist/errors/index.d.ts"
+      "require": "./dist/errors/index.cjs"
     },
     "./events": {
+      "types": "./dist/events/index.d.ts",
       "import": "./dist/events/index.js",
-      "require": "./dist/events/index.cjs",
-      "types": "./dist/events/index.d.ts"
+      "require": "./dist/events/index.cjs"
     },
     "./light": {
+      "types": "./dist/light/index.d.ts",
       "import": "./dist/light/index.js",
-      "require": "./dist/light/index.cjs",
-      "types": "./dist/light/index.d.ts"
+      "require": "./dist/light/index.cjs"
     }
   },
   "main": "./dist/index.cjs",
