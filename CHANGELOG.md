@@ -1,3 +1,12 @@
+
+
+# 1.0.0 (2026-03-19)
+
+
+### Features
+
+* implement Herald Protocol TypeScript SDK ([ec099a2](https://github.com/heraldhq-protocol/herald-sdk-ts/commit/ec099a210d76541eea3cfee766bc82db23af7595))
+
 # Changelog
 
 All notable changes to the `@herald-protocol/sdk` will be documented in this file.
