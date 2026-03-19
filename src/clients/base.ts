@@ -16,13 +16,17 @@ export interface ResolvedHeraldConfig {
 
 /**
  * Base class providing shared connection, program instance, and config.
- * All three client classes extend this.
+ * All three client classes (`UserClient`, `AuthorityClient`, `ReadClient`) extend this.
  */
 export abstract class BaseClient {
     readonly connection: Connection;
     readonly program: Program;
     readonly config: ResolvedHeraldConfig;
 
+    /**
+     * Builds the base client.
+     * @param config - The Herald configuration object containing RPC URL, cluster, and commitment.
+     */
     constructor(config: HeraldConfig) {
         this.config = {
             cluster: config.cluster ?? 'mainnet-beta',

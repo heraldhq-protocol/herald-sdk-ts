@@ -20,6 +20,17 @@ export class ReadClient extends BaseClient {
     /**
      * Fetch IdentityAccount for a given wallet pubkey.
      * Returns null if the account does not exist (wallet not registered).
+     * 
+     * @param owner - The wallet public key to fetch the identity for.
+     * @returns A promise resolving to the deserialized `IdentityAccount` or `null` if not found.
+     * 
+     * @example
+     * ```typescript
+     * const identity = await readClient.fetchIdentityAccount(userWallet.publicKey);
+     * if (identity) {
+     *   console.log('User is subscribed to all:', identity.optInAll);
+     * }
+     * ```
      */
     async fetchIdentityAccount(
         owner: PublicKey,
@@ -39,6 +50,9 @@ export class ReadClient extends BaseClient {
 
     /**
      * Fetch ProtocolRegistryAccount for a given protocol wallet pubkey.
+     * 
+     * @param protocolOwner - The public key of the protocol developer's wallet.
+     * @returns A promise resolving to the deserialized `ProtocolRegistryAccount` or `null` if not found.
      */
     async fetchProtocolAccount(
         protocolOwner: PublicKey,
@@ -62,6 +76,9 @@ export class ReadClient extends BaseClient {
     /**
      * Check if a wallet is registered in the Herald Privacy Registry.
      * Efficient: only checks account existence, does not deserialise.
+     * 
+     * @param owner - The wallet public key to check for registration.
+     * @returns A promise resolving to `true` if the wallet is registered, `false` otherwise.
      */
     async isRegistered(owner: PublicKey): Promise<boolean> {
         const [pda] = findIdentityPda(owner, new PublicKey(this.config.programId));
@@ -72,6 +89,9 @@ export class ReadClient extends BaseClient {
     /**
      * Fetch multiple IdentityAccounts in a single RPC call.
      * Returns a Map<base58_pubkey, IdentityAccount | null>.
+     * 
+     * @param owners - An array of wallet public keys to fetch identities for.
+     * @returns A Map where the key is the base58 string of the owner's pubkey and the value is the `IdentityAccount` or `null`.
      */
     async fetchIdentityAccountBatch(
         owners: PublicKey[],
@@ -95,6 +115,9 @@ export class ReadClient extends BaseClient {
     /**
      * Check protocol eligibility to send notifications.
      * Mirrors the on-chain can_send() helper method.
+     * 
+     * @param protocolOwner - The public key of the protocol.
+     * @returns An object indicating if the protocol can send, the reason for failure, remaining sends, and expiration.
      */
     async checkProtocolCanSend(
         protocolOwner: PublicKey,
@@ -144,6 +167,10 @@ export class ReadClient extends BaseClient {
     /**
      * Fetch delivery receipts for a recipient wallet from the
      * Light Protocol Photon indexer.
+     * 
+     * @param recipientWallet - The wallet public key of the recipient.
+     * @param _options - Pagination options.
+     * @returns A promise resolving to a `LightReceiptResponse`.
      */
     async fetchReceiptsForWallet(
         recipientWallet: PublicKey,
@@ -158,6 +185,10 @@ export class ReadClient extends BaseClient {
 
     /**
      * Fetch all receipts sent by a specific protocol.
+     * 
+     * @param _protocolOwner - The public key of the protocol developer's wallet.
+     * @param _options - Pagination options.
+     * @returns A promise resolving to a `LightReceiptResponse`.
      */
     async fetchReceiptsByProtocol(
         _protocolOwner: PublicKey,

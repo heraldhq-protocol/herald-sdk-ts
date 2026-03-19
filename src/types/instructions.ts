@@ -35,7 +35,9 @@ export interface UpdateIdentityParams {
     digestMode?: boolean;
 }
 
+/** Parameters for deleting an identity (GDPR erasure). */
 export interface DeleteIdentityParams {
+    /** The wallet public key of the identity owner. */
     owner: PublicKey;
 }
 
@@ -50,13 +52,19 @@ export interface RegisterProtocolParams {
     tier: ProtocolTier;
 }
 
+/** Parameters for deactivating a protocol. */
 export interface DeactivateProtocolParams {
+    /** Herald authority PublicKey (must match HERALD_AUTHORITY constant). */
     authority: PublicKey;
+    /** Protocol's wallet pubkey. */
     protocolOwner: PublicKey;
 }
 
+/** Parameters for reactivating a protocol. */
 export interface ReactivateProtocolParams {
+    /** Herald authority PublicKey. */
     authority: PublicKey;
+    /** Protocol's wallet pubkey. */
     protocolOwner: PublicKey;
 }
 

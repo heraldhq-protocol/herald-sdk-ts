@@ -33,6 +33,29 @@ export class UserClient extends BaseClient {
      *
      * IMPORTANT: The caller must encrypt the email BEFORE calling this.
      * Use the encryption module: `encryptEmail(email, walletPubkey)`
+     * 
+     * @param params - The parameters required to register an identity.
+     * @param params.owner - The wallet public key of the identity owner.
+     * @param params.encryptedEmail - The NaCl-encrypted email bytes (typically created with `encryptEmail`).
+     * @param params.emailHash - The SHA-256 hash of the plaintext email.
+     * @param params.nonce - The 24-byte nonce used during NaCl encryption.
+     * @param params.optIns - Flags determining what category of notifications the user wants to receive.
+     * @param params.digestMode - Whether the user prefers batched daily digests instead of instant notifications.
+     * 
+     * @returns A promise that resolves to an unsigned `TransactionInstruction`.
+     * 
+     * @example
+     * ```typescript
+     * const txIx = await userClient.registerIdentity({
+     *   owner: userWallet.publicKey,
+     *   encryptedEmail: encryptedBytes,
+     *   emailHash: hashedEmailBytes,
+     *   nonce: encryptionNonce,
+     *   optIns: { optInAll: true, optInDefi: false, optInGovernance: false, optInMarketing: false },
+     *   digestMode: false
+     * });
+     * // Add to transaction and sign
+     * ```
      */
     async registerIdentity(
         params: RegisterIdentityParams,
@@ -69,6 +92,25 @@ export class UserClient extends BaseClient {
      * Build instruction to update an existing identity.
      * All fields are optional — only provided fields are updated on-chain.
      * At least one field must be provided (enforced by program).
+     * 
+     * @param params - The parameters required to update an identity.
+     * @param params.owner - The wallet public key of the identity owner.
+     * @param params.encryptedEmail - (Optional) New NaCl-encrypted email bytes.
+     * @param params.emailHash - (Optional) New SHA-256 hash of the plaintext email.
+     * @param params.nonce - (Optional) New 24-byte nonce used during NaCl encryption.
+     * @param params.optIns - (Optional) Updated notification preference flags.
+     * @param params.digestMode - (Optional) Updated digest mode preference.
+     * 
+     * @returns A promise that resolves to an unsigned `TransactionInstruction`.
+     * @throws {HeraldError} Validates that at least one update field is provided.
+     * 
+     * @example
+     * ```typescript
+     * const txIx = await userClient.updateIdentity({
+     *   owner: userWallet.publicKey,
+     *   optIns: { optInAll: false, optInDefi: true, optInGovernance: true, optInMarketing: false }
+     * });
+     * ```
      */
     async updateIdentity(
         params: UpdateIdentityParams,
@@ -114,6 +156,18 @@ export class UserClient extends BaseClient {
     /**
      * Build instruction to delete an identity (GDPR right to erasure).
      * Closes the PDA and returns rent lamports to owner.
+     * 
+     * @param params - Parameters required to delete an identity.
+     * @param params.owner - The wallet public key of the identity owner holding the PDA.
+     * 
+     * @returns A promise that resolves to an unsigned `TransactionInstruction`.
+     * 
+     * @example
+     * ```typescript
+     * const txIx = await userClient.deleteIdentity({
+     *   owner: userWallet.publicKey
+     * });
+     * ```
      */
     async deleteIdentity(
         params: DeleteIdentityParams,
