@@ -1,7 +1,7 @@
 // ── Types Barrel ──────────────────────────────────────────────────
-export * from './accounts.js';
-export * from './instructions.js';
-export * from './events.js';
-export * from './errors.js';
-export * from './light.js';
-export * from './config.js';
+export * from './accounts';
+export * from './instructions';
+export * from './events';
+export * from './errors';
+export * from './light';
+export * from './config';
