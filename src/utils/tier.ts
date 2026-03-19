@@ -3,12 +3,12 @@ import { PROTOCOL_TIERS, TIER_METADATA } from '../types/accounts.js';
 
 /** Get human-readable tier name. */
 export function getTierName(tier: ProtocolTier): string {
-    return TIER_METADATA[tier].name;
+    return TIER_METADATA[tier]?.name || 'Unknown';
 }
 
 /** Get sends limit for a tier. */
 export function getSendsLimit(tier: ProtocolTier): bigint {
-    return TIER_METADATA[tier].sendsLimit;
+    return TIER_METADATA[tier]?.sendsLimit || 0n;
 }
 
 /** Get remaining sends for a protocol account. */

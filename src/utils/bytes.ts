@@ -9,12 +9,16 @@ export function toHex(bytes: Uint8Array): string {
 
 /** Convert hex string to Uint8Array. */
 export function fromHex(hex: string): Uint8Array {
-    const length = hex.length / 2;
-    const result = new Uint8Array(length);
-    for (let i = 0; i < length; i++) {
-        result[i] = parseInt(hex.slice(i * 2, i * 2 + 2), 16);
+    let paddedHex = hex;
+    if (paddedHex.length % 2 !== 0) {
+        paddedHex = '0' + paddedHex;
     }
-    return result;
+
+    const bytes = new Uint8Array(paddedHex.length / 2);
+    for (let i = 0; i < paddedHex.length; i += 2) {
+        bytes[i / 2] = parseInt(paddedHex.substring(i, i + 2), 16);
+    }
+    return bytes;
 }
 
 /** Convert Uint8Array to base58 string. */

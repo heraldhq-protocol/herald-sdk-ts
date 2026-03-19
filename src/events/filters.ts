@@ -26,7 +26,11 @@ export function matchesFilter(event: HeraldEvent, filter: EventFilter): boolean 
     if (filter.wallet) {
         const walletKey = filter.wallet.toBase58();
         const evt = event as any;
-        if (evt.wallet?.toBase58() !== walletKey && evt.protocol?.toBase58() !== walletKey) {
+        if (
+            evt.wallet?.toBase58() !== walletKey &&
+            evt.protocol?.toBase58() !== walletKey &&
+            evt.owner?.toBase58() !== walletKey
+        ) {
             return false;
         }
     }
@@ -39,8 +43,8 @@ export function matchesFilter(event: HeraldEvent, filter: EventFilter): boolean 
         }
     }
 
-    if (filter.category !== undefined && 'category' in event) {
-        if ((event as any).category !== filter.category) return false;
+    if (filter.category !== undefined) {
+        if (!('category' in event) || (event as any).category !== filter.category) return false;
     }
 
     const ts = (event as any).timestamp as bigint | undefined;
