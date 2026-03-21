@@ -1,5 +1,6 @@
 import nacl from 'tweetnacl';
-import { decodeUTF8, encodeUTF8 } from 'tweetnacl-util';
+import naclUtil from 'tweetnacl-util';
+const { decodeUTF8, encodeUTF8 } = naclUtil;
 import type { PublicKey } from '@solana/web3.js';
 import { deriveX25519FromEd25519, deriveX25519SecretFromEd25519 } from './conversion.js';
 import { HeraldError } from '../errors/index.js';

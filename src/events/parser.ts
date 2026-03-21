@@ -115,6 +115,8 @@ export function parseHeraldEvent(
                 tier: raw.tier as any,
                 newExpiry: BigInt((raw.newExpiry as any).toString()),
                 periodsPaid: raw.periodsPaid as number,
+                usdcPaid: BigInt((raw.usdcPaid as any)?.toString() || '0'),
+                paymentSource: raw.paymentSource ? Buffer.from(raw.paymentSource as any[]).toString('utf8').replace(/\0/g, '') : '',
                 timestamp: BigInt((raw.timestamp as any).toString()),
             } satisfies SubscriptionRenewedEvent;
 

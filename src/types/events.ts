@@ -106,6 +106,8 @@ export interface SubscriptionRenewedEvent {
     tier: ProtocolTier;
     newExpiry: bigint;
     periodsPaid: number;
+    usdcPaid: bigint;
+    paymentSource: string;
     timestamp: bigint;
 }
 

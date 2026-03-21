@@ -6,6 +6,7 @@ export default defineConfig({
         'clients/user': 'src/clients/user.ts',
         'clients/authority': 'src/clients/authority.ts',
         'clients/read': 'src/clients/read.ts',
+        'billing/index': 'src/billing/index.ts',
         'encryption/index': 'src/encryption/index.ts',
         'pda/index': 'src/pda/index.ts',
         'types/index': 'src/types/index.ts',

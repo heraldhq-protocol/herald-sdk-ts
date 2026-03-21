@@ -21,6 +21,7 @@ The SDK is organized into three primary clients tailored for different consumers
 1. **`UserClient`**: Used by frontend applications (React, Next.js, Vue) to let end-users register their identities, update notification preferences, or delete their accounts using their own wallet signature.
 2. **`ReadClient`**: A signing-free client useful for quickly checking if wallets are registered, or validating if a protocol is eligible to send messages. Safe for both browsers and node backends.
 3. **`AuthorityClient`**: Specialized client used EXCLUSIVELY by the Herald Node Backend. Requires the global `HERALD_AUTHORITY` signature to manage protocol lifecycle and append encrypted receipts.
+4. **`Billing Module`**: A dedicated suite of clients (`BillingReadClient`, `HelioClient`, `PaymentClient`) located under `@herald-protocol/sdk/billing` to manage protocol subscription tiers, check quotas, and execute on-chain usage payments.
 
 ---
 
@@ -30,6 +31,7 @@ All clients inherit from a shared `BaseClient` configuration:
 
 ```typescript
 import { UserClient, ReadClient, AuthorityClient } from '@herald-protocol/sdk';
+import { BillingReadClient } from '@herald-protocol/sdk/billing';
 
 const config = {
   rpcUrl: 'https://api.mainnet-beta.solana.com',
@@ -39,6 +41,7 @@ const config = {
 
 const userClient = new UserClient(config);
 const readClient = new ReadClient(config);
+const billingClient = new BillingReadClient(config);
 ```
 
 ---
@@ -130,7 +133,38 @@ async function checkStatus(userPubkey: PublicKey) {
 }
 ```
 
-### 4. Listening for Events dynamically
+### 4. Billing & Subscriptions (Protocol Admin)
+
+Protocols must maintain an active subscription to send notifications. The billing module provides methods to check quotas, calculate upgrade costs, and perform on-chain payments in USDC.
+
+```typescript
+import { Keypair } from '@solana/web3.js';
+import { PaymentClient, BillingReadClient } from '@herald-protocol/sdk/billing';
+
+const billingRead = new BillingReadClient(config);
+const paymentClient = new PaymentClient(config);
+
+async function manageSubscription(protocolWallet: Keypair) {
+  // Check remaining messaging quota
+  const status = await billingRead.getSubscriptionStatus(protocolWallet.publicKey);
+  console.log(`Sends remaining: ${status?.sendsRemaining}`);
+
+  // Calculate cost for 12 months on the Growth Tier
+  const cost = await paymentClient.calculateCost(protocolWallet.publicKey, 12, 'USDC');
+  console.log(`Total cost: $${cost.total} USDC (Discount: ${cost.discountApplied})`);
+
+  // Build and execute the payment transaction
+  const txSignature = await paymentClient.paySubscription(
+    protocolWallet.publicKey, 
+    12, 
+    'USDC',
+    protocolWallet // Signer
+  );
+  console.log('Subscription fully renewed:', txSignature);
+}
+```
+
+### 5. Listening for Events dynamically
 
 The SDK can bind to the Anchor program instance to stream real-time events, such as when a user is registered or when a delivery occurs.
 
