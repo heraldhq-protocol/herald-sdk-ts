@@ -108,5 +108,13 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/heraldhq-protocol/herald-sdk-ts.git"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "bigint-buffer",
+      "bufferutil",
+      "esbuild",
+      "utf-8-validate"
+    ]
   }
 }
