@@ -5,6 +5,14 @@ All notable changes to the `@herald-protocol/sdk` will be documented in this fil
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.1](https://github.com/heraldhq-protocol/herald-sdk-ts/compare/v1.1.0...v1.1.1) (2026-04-11)
+
+
+### Bug Fixes
+
+* **sdk:** resolve Buffer source type mismatch in verifyWebhookSignature ([12ac990](https://github.com/heraldhq-protocol/herald-sdk-ts/commit/12ac990543f7898cf3163932b083fdacd1123daa))
+* **sdk:** resolve unconstructable HelioSDK signature ([eb6108f](https://github.com/heraldhq-protocol/herald-sdk-ts/commit/eb6108f4539823c1f3a398e853d7824bc45ea770))
+
 ## [1.1.2] (2026-04-11)
 
 ### Features
