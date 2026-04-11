@@ -178,7 +178,7 @@ export class Herald {
      * @param secret - Your webhook secret
      */
     static async verifyWebhookSignature(
-        payload: string | Buffer,
+        payload: string | Uint8Array | unknown,
         signature: string,
         secret: string,
     ): Promise<boolean> {
@@ -190,10 +190,15 @@ export class Herald {
             false,
             ['sign'],
         );
+        
+        const dataToSign = typeof payload === 'string' 
+            ? encoder.encode(payload) 
+            : new Uint8Array(payload as ArrayLike<number> | ArrayBufferLike);
+
         const sig = await globalThis.crypto.subtle.sign(
             'HMAC',
             key,
-            typeof payload === 'string' ? encoder.encode(payload) : payload,
+            dataToSign,
         );
         const expected = Buffer.from(sig).toString('hex');
         return expected === signature;
