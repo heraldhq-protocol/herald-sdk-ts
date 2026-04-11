@@ -103,8 +103,9 @@ export class HelioBilling {
         if (this.sdkInstance) return this.sdkInstance;
 
         try {
-            const { default: HelioSDK } = await import('@heliofi/sdk');
-            this.sdkInstance = new HelioSDK({
+            const helioMod = await import('@heliofi/sdk');
+            const HelioSDKClass: any = (helioMod as any).HelioSDK || (helioMod as any).default || helioMod;
+            this.sdkInstance = new HelioSDKClass({
                 apiKey: this.config.apiKey,
                 secretKey: this.config.secretKey,
                 network: this.config.network,

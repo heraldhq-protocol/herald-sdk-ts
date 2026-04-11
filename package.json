@@ -1,6 +1,6 @@
 {
   "name": "@herald-protocol/sdk",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "TypeScript SDK for the Herald Privacy Registry Anchor program",
   "license": "MIT",
   "type": "module",
@@ -67,11 +67,6 @@
       "types": "./dist/channels/index.d.ts",
       "import": "./dist/channels/index.js",
       "require": "./dist/channels/index.cjs"
-    },
-    "./billing": {
-      "types": "./dist/billing/index.d.ts",
-      "import": "./dist/billing/index.js",
-      "require": "./dist/billing/index.cjs"
     }
   },
   "main": "./dist/index.cjs",
@@ -98,6 +93,7 @@
   },
   "dependencies": {
     "@coral-xyz/anchor": "^0.30.1",
+    "@heliofi/sdk": "^3.0.3",
     "@lightprotocol/stateless.js": "^0.17.1",
     "@sendgrid/mail": "^8.1.6",
     "@solana/spl-token": "^0.4.14",

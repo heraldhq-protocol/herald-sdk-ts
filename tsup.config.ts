@@ -13,8 +13,7 @@ export default defineConfig({
         'errors/index': 'src/errors/index.ts',
         'events/index': 'src/events/index.ts',
         'light/index': 'src/light/index.ts',
-        'channels/index': 'src/channels/index.ts',
-        'billing/index': 'src/billing/index.ts',
+        'channels/index': 'src/channels/index.ts'
     },
     format: ['cjs', 'esm'],
     dts: true,
