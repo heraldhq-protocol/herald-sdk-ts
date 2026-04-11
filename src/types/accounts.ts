@@ -59,6 +59,26 @@ export interface IdentityAccount {
     digestMode: boolean;
     /** PDA canonical bump. */
     bump: number;
+
+    // ── Channel fields (multi-channel extension) ──────────────────
+    /** Email channel enabled (default true for all accounts). */
+    channelEmail: boolean;
+    /** Telegram channel enabled. */
+    channelTelegram: boolean;
+    /** SMS channel enabled. */
+    channelSms: boolean;
+    /** NaCl box encrypted Telegram chat_id. Empty = not registered. */
+    encryptedTelegramId: Uint8Array;
+    /** SHA-256 of the Telegram chat_id string. */
+    telegramIdHash: Uint8Array; // [u8; 32]
+    /** NaCl nonce for Telegram encryption. */
+    nonceTelegram: Uint8Array; // [u8; 24]
+    /** NaCl box encrypted E.164 phone number. Empty = not registered. */
+    encryptedPhone: Uint8Array;
+    /** SHA-256 of the E.164 phone number. */
+    phoneHash: Uint8Array; // [u8; 32]
+    /** NaCl nonce for phone encryption. */
+    nonceSms: Uint8Array; // [u8; 24]
 }
 
 /**

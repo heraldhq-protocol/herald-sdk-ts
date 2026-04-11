@@ -62,6 +62,16 @@
       "types": "./dist/light/index.d.ts",
       "import": "./dist/light/index.js",
       "require": "./dist/light/index.cjs"
+    },
+    "./channels": {
+      "types": "./dist/channels/index.d.ts",
+      "import": "./dist/channels/index.js",
+      "require": "./dist/channels/index.cjs"
+    },
+    "./billing": {
+      "types": "./dist/billing/index.d.ts",
+      "import": "./dist/billing/index.js",
+      "require": "./dist/billing/index.cjs"
     }
   },
   "main": "./dist/index.cjs",

@@ -11,6 +11,8 @@ export {
     HERALD_AUTHORITY,
     SUBSCRIPTION_PERIOD_SECS,
     MAX_ENCRYPTED_EMAIL_LEN,
+    MAX_ENCRYPTED_TELEGRAM_ID_LEN,
+    MAX_ENCRYPTED_PHONE_LEN,
     TIER_SEND_LIMITS,
     HERALD_RECEIPT_MERKLE_TREE,
 } from './constants.js';
@@ -82,6 +84,52 @@ export {
     buildLightRemainingAccounts,
     ReceiptBatchProcessor,
 } from './light/index.js';
+
+// ── Channels ──────────────────────────────────────────────────
+export {
+    ChannelUserClient,
+    encryptTelegramId,
+    encryptPhone,
+    decryptTelegramId,
+    decryptPhone,
+} from './channels/index.js';
+
+export type {
+    ChannelType,
+    ChannelSettings,
+    ChannelConfig,
+    ChannelStatus,
+    TelegramChannelData,
+    SmsChannelData,
+    RegisterTelegramParams,
+    RegisterSmsParams,
+    UpdateChannelSettingsParams,
+    RemoveChannelParams,
+} from './channels/index.js';
+
+// ── Herald Developer SDK ──────────────────────────────────────
+export {
+    Herald,
+    type HeraldOptions,
+    type HeraldEnvironment,
+    type NotifyParams,
+    type NotifyResult,
+    type NotifyCategory,
+    type NotificationStatusResult,
+    type BulkNotifyParams,
+    type BulkNotifyResult,
+} from './herald.js';
+
+// ── Helio Billing ─────────────────────────────────────────────
+export {
+    HelioBilling,
+    type HelioBillingConfig,
+    type HelioNetwork,
+    type HeraldTier,
+    type SubscriptionCheckoutParams,
+    type OverageInvoiceParams,
+    type CheckoutResult,
+} from './billing/index.js';
 
 // ── Utilities ─────────────────────────────────────────────────────
 export {

@@ -7,6 +7,7 @@ import { TIER_METADATA } from '../types/accounts.js';
 import type { IdentityAccount, ProtocolRegistryAccount } from '../types/accounts.js';
 import type { LightReceiptResponse } from '../types/light.js';
 import type { HeraldConfig } from '../types/config.js';
+import type { ChannelConfig } from '../channels/types.js';
 
 /**
  * ReadClient — account fetching and event subscriptions.
@@ -198,6 +199,37 @@ export class ReadClient extends BaseClient {
         // Placeholder — returns empty until Light RPC integration is complete.
         return { receipts: [], total: 0 };
     }
+    /**
+     * Fetch channel configuration for an identity.
+     * Returns which channels are enabled, which are registered, and total active count.
+     *
+     * @param owner - The wallet public key to check channel status for.
+     * @returns ChannelConfig or null if identity not found.
+     */
+    async fetchChannelConfig(owner: PublicKey): Promise<ChannelConfig | null> {
+        const identity = await this.fetchIdentityAccount(owner);
+        if (!identity) return null;
+
+        const email = {
+            enabled: identity.channelEmail,
+            registered: identity.encryptedEmail.length > 0,
+        };
+        const telegram = {
+            enabled: identity.channelTelegram,
+            registered: identity.encryptedTelegramId.length > 0,
+        };
+        const sms = {
+            enabled: identity.channelSms,
+            registered: identity.encryptedPhone.length > 0,
+        };
+
+        let activeCount = 0;
+        if (email.enabled && email.registered) activeCount++;
+        if (telegram.enabled && telegram.registered) activeCount++;
+        if (sms.enabled && sms.registered) activeCount++;
+
+        return { email, telegram, sms, activeCount };
+    }
 }
 
 // ── Account Deserialization Helpers ───────────────────────────────
@@ -215,6 +247,16 @@ function deserializeIdentityAccount(raw: any): IdentityAccount {
         optInMarketing: raw.optInMarketing ?? raw.opt_in_marketing ?? false,
         digestMode: raw.digestMode ?? raw.digest_mode ?? false,
         bump: raw.bump ?? 0,
+        // Channel fields
+        channelEmail: raw.channelEmail ?? raw.channel_email ?? false,
+        channelTelegram: raw.channelTelegram ?? raw.channel_telegram ?? false,
+        channelSms: raw.channelSms ?? raw.channel_sms ?? false,
+        encryptedTelegramId: Uint8Array.from(raw.encryptedTelegramId ?? raw.encrypted_telegram_id ?? []),
+        telegramIdHash: Uint8Array.from(raw.telegramIdHash ?? raw.telegram_id_hash ?? new Array(32).fill(0)),
+        nonceTelegram: Uint8Array.from(raw.nonceTelegram ?? raw.nonce_telegram ?? new Array(24).fill(0)),
+        encryptedPhone: Uint8Array.from(raw.encryptedPhone ?? raw.encrypted_phone ?? []),
+        phoneHash: Uint8Array.from(raw.phoneHash ?? raw.phone_hash ?? new Array(32).fill(0)),
+        nonceSms: Uint8Array.from(raw.nonceSms ?? raw.nonce_sms ?? new Array(24).fill(0)),
     };
 }
 

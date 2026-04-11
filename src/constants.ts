@@ -20,6 +20,12 @@ export const SUBSCRIPTION_PERIOD_SECS = 2_592_000;
 /** Maximum encrypted email length enforced by the program (bytes). */
 export const MAX_ENCRYPTED_EMAIL_LEN = 200;
 
+/** Maximum encrypted Telegram chat_id length enforced by the program (bytes). */
+export const MAX_ENCRYPTED_TELEGRAM_ID_LEN = 80;
+
+/** Maximum encrypted E.164 phone number length enforced by the program (bytes). */
+export const MAX_ENCRYPTED_PHONE_LEN = 65;
+
 /**
  * Maximum sends per billing period by tier index.
  *   Tier 0 (dev):        1,000 sends / month
