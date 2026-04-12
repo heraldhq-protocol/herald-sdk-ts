@@ -5,6 +5,20 @@ All notable changes to the `@herald-protocol/sdk` will be documented in this fil
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0](https://github.com/heraldhq-protocol/herald-sdk-ts/compare/v1.1.0...v1.2.0) (2026-04-12)
+
+
+### Features
+
+* complete Phase 7 SDK enhancements ([5a6f5ba](https://github.com/heraldhq-protocol/herald-sdk-ts/commit/5a6f5ba9c9ea5fd8dcbbe2329cc6610522868e7e))
+* **sdk:** refactor helio billing to use native @heliofi/sdk and template-based checkouts ([7564332](https://github.com/heraldhq-protocol/herald-sdk-ts/commit/7564332555357da4fc08dedc0eaae497f20a94fc))
+
+
+### Bug Fixes
+
+* **sdk:** resolve Buffer source type mismatch in verifyWebhookSignature ([12ac990](https://github.com/heraldhq-protocol/herald-sdk-ts/commit/12ac990543f7898cf3163932b083fdacd1123daa))
+* **sdk:** resolve unconstructable HelioSDK signature ([eb6108f](https://github.com/heraldhq-protocol/herald-sdk-ts/commit/eb6108f4539823c1f3a398e853d7824bc45ea770))
+
 ## [1.1.3] (2026-04-11)
 
 ### Features
