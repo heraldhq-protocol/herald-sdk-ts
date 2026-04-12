@@ -5,6 +5,12 @@ All notable changes to the `@herald-protocol/sdk` will be documented in this fil
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.3] (2026-04-11)
+
+### Features
+* **billing:** properly set `isSubscription: true` flag in Helio checkouts.
+* **billing:** support for using pre-existing Helio Paylink templates via `templateId`.
+
 ## [1.1.2] (2026-04-11)
 
 ### Features

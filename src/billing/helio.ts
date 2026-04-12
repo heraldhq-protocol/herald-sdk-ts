@@ -2,27 +2,9 @@
  * Helio billing integration for Herald.
  *
  * Wraps the @heliofi/sdk to handle Herald-specific billing operations:
- *   - Subscription checkout creation
+ *   - Subscription checkout creation (using existing Paylink templates or dynamic)
  *   - Overage invoice payments
  *   - Environment-aware configuration (mainnet/devnet)
- *
- * @example
- * ```typescript
- * import { HelioBilling } from '@herald-protocol/sdk';
- *
- * const billing = new HelioBilling({
- *   apiKey: process.env.HELIO_API_KEY!,
- *   secretKey: process.env.HELIO_SECRET_KEY!,
- *   network: 'mainnet',
- * });
- *
- * const checkout = await billing.createSubscriptionCheckout({
- *   tier: 'growth',
- *   walletAddress: '7xR4mKp2nQ...',
- *   successUrl: 'https://app.useherald.xyz/billing/success',
- *   cancelUrl: 'https://app.useherald.xyz/billing',
- * });
- * ```
  */
 
 export type HelioNetwork = 'mainnet' | 'devnet';
@@ -42,6 +24,8 @@ export interface SubscriptionCheckoutParams {
     tier: HeraldTier;
     /** Subscriber's Solana wallet address. */
     walletAddress: string;
+    /** Optional specific Paylink ID (template) for this tier. */
+    templateId?: string;
     /** Redirect URL on successful payment. */
     successUrl: string;
     /** Redirect URL on cancelled payment. */
@@ -55,7 +39,7 @@ export interface OverageInvoiceParams {
     walletAddress: string;
     /** Number of overage sends to invoice. */
     overageSends: number;
-    /** Price per send in USD (converted to SOL/USDC at checkout). */
+    /** Price per send in USD. */
     pricePerSend: number;
     /** Invoice description. */
     description?: string;
@@ -64,11 +48,11 @@ export interface OverageInvoiceParams {
 export interface CheckoutResult {
     /** Helio checkout URL — redirect user here. */
     checkoutUrl: string;
-    /** Helio transaction ID for tracking. */
-    transactionId: string;
+    /** Helio Paylink ID for tracking. */
+    paylinkId: string;
 }
 
-/** Tier pricing in USDC (monthly). */
+/** Tier details for dynamic fallback. */
 const TIER_PRICING: Record<HeraldTier, { name: string; priceUsdc: number; sends: number }> = {
     growth: { name: 'Growth', priceUsdc: 49, sends: 10_000 },
     scale: { name: 'Scale', priceUsdc: 199, sends: 100_000 },
@@ -77,10 +61,6 @@ const TIER_PRICING: Record<HeraldTier, { name: string; priceUsdc: number; sends:
 
 /**
  * HelioBilling — Herald-specific wrapper around the Helio SDK.
- *
- * This class provides environment-aware billing operations.
- * It lazy-loads @heliofi/sdk to avoid hard dependency for users
- * who don't need billing features.
  */
 export class HelioBilling {
     private readonly config: Required<HelioBillingConfig>;
@@ -94,11 +74,6 @@ export class HelioBilling {
         };
     }
 
-    /**
-     * Lazily initialize the Helio SDK.
-     * This allows the billing module to be imported without requiring
-     * @heliofi/sdk to be installed unless actually used.
-     */
     private async getSDK(): Promise<any> {
         if (this.sdkInstance) return this.sdkInstance;
 
@@ -108,7 +83,7 @@ export class HelioBilling {
             this.sdkInstance = new HelioSDKClass({
                 apiKey: this.config.apiKey,
                 secretKey: this.config.secretKey,
-                network: this.config.network,
+                network: this.config.network === 'devnet' ? 'test' : 'mainnet',
             });
             return this.sdkInstance;
         } catch (err) {
@@ -119,8 +94,8 @@ export class HelioBilling {
     }
 
     /**
-     * Create a subscription checkout for a Herald tier.
-     * Returns a URL to redirect the user to for payment.
+     * Create a subscription checkout.
+     * If templateId is provided, Helio will use it as a base.
      */
     async createSubscriptionCheckout(
         params: SubscriptionCheckoutParams,
@@ -129,10 +104,12 @@ export class HelioBilling {
         const tier = TIER_PRICING[params.tier];
 
         if (!tier) {
-            throw new Error(`Invalid tier: ${params.tier}. Use 'growth', 'scale', or 'enterprise'.`);
+            throw new Error(`Invalid tier: ${params.tier}`);
         }
 
         const paylink = await sdk.paylink.create({
+            // If templateId provided, Helio Dashboard settings for that ID are used as base
+            templateId: params.templateId,
             name: `Herald ${tier.name} Subscription`,
             price: tier.priceUsdc,
             currency: 'USDC',
@@ -141,6 +118,11 @@ export class HelioBilling {
             cancelUrl: params.cancelUrl,
             features: {
                 requireWalletAddress: true,
+                isSubscription: true,
+            },
+            subscriptionDetails: {
+                interval: 'monthly',
+                intervalCount: 1,
             },
             metadata: {
                 herald_tier: params.tier,
@@ -151,12 +133,12 @@ export class HelioBilling {
 
         return {
             checkoutUrl: paylink.url,
-            transactionId: paylink.id,
+            paylinkId: paylink.id,
         };
     }
 
     /**
-     * Create an overage invoice for sends beyond the tier limit.
+     * Create an overage invoice (one-time payment).
      */
     async createOverageInvoice(
         params: OverageInvoiceParams,
@@ -172,42 +154,26 @@ export class HelioBilling {
                 `Overage: ${params.overageSends.toLocaleString()} additional sends at $${params.pricePerSend}/send`,
             features: {
                 requireWalletAddress: true,
+                isSubscription: false,
             },
             metadata: {
                 herald_type: 'overage',
                 herald_wallet: params.walletAddress,
                 herald_overage_sends: String(params.overageSends),
-                herald_price_per_send: String(params.pricePerSend),
             },
         });
 
         return {
             checkoutUrl: paylink.url,
-            transactionId: paylink.id,
+            paylinkId: paylink.id,
         };
     }
 
-    /**
-     * Get pricing info for a tier.
-     */
-    static getTierPricing(tier: HeraldTier) {
-        return TIER_PRICING[tier] ?? null;
-    }
-
-    /**
-     * Get all available tiers.
-     */
     static getAllTiers() {
         return Object.entries(TIER_PRICING).map(([key, value]) => ({
             id: key as HeraldTier,
             ...value,
         }));
     }
-
-    /**
-     * Get the current network.
-     */
-    getNetwork(): HelioNetwork {
-        return this.config.network;
-    }
 }
+

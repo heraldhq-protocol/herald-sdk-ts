@@ -193,7 +193,7 @@ export class Herald {
         
         const dataToSign = typeof payload === 'string' 
             ? encoder.encode(payload) 
-            : new Uint8Array(payload as ArrayLike<number> | ArrayBufferLike);
+            : new Uint8Array(payload as ArrayLike<number> | ArrayBuffer);
 
         const sig = await globalThis.crypto.subtle.sign(
             'HMAC',
