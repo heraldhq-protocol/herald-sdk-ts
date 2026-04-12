@@ -53,6 +53,12 @@ export interface NotifyParams {
     receipt?: boolean;
     /** Idempotency key — prevents duplicate sends. Max 128 chars. */
     idempotencyKey?: string;
+    /** Custom email template ID (Growth+ tier). */
+    templateId?: string;
+    /** Custom Telegram template ID (Scale+ tier). */
+    telegramTemplateId?: string;
+    /** Variables injected into custom templates. */
+    templateVariables?: Record<string, string>;
 }
 
 export interface NotifyResult {
@@ -91,6 +97,12 @@ export interface BulkNotifyParams {
     receipt?: boolean;
     /** Idempotency prefix — each wallet gets `{prefix}:{wallet}`. */
     idempotencyPrefix?: string;
+    /** Custom email template ID (Growth+ tier). */
+    templateId?: string;
+    /** Custom Telegram template ID (Scale+ tier). */
+    telegramTemplateId?: string;
+    /** Variables injected into custom templates. */
+    templateVariables?: Record<string, string>;
 }
 
 export interface BulkNotifyResult {
@@ -106,6 +118,18 @@ const GATEWAY_URLS: Record<HeraldEnvironment, string> = {
     production: 'https://api.useherald.xyz',
     development: 'http://localhost:3000',
 };
+
+export class HeraldError extends Error {
+    constructor(
+        message: string,
+        public readonly status?: number,
+        public readonly code?: string | number,
+        public readonly headers?: Record<string, string>,
+    ) {
+        super(message);
+        this.name = 'HeraldError';
+    }
+}
 
 export class Herald {
     private readonly apiKey: string;
@@ -137,6 +161,9 @@ export class Herald {
             category: params.category ?? 'defi',
             writeReceipt: params.receipt ?? true,
             idempotencyKey: params.idempotencyKey,
+            templateId: params.templateId,
+            telegramTemplateId: params.telegramTemplateId,
+            templateVariables: params.templateVariables,
         });
     }
 
@@ -146,7 +173,7 @@ export class Herald {
      */
     async notifyBulk(params: BulkNotifyParams): Promise<BulkNotifyResult> {
         if (params.wallets.length > 1000) {
-            throw new Error('Herald: Max 1000 wallets per bulk request');
+            throw new HeraldError('Herald: Max 1000 wallets per bulk request', 400, 'PAYLOAD_TOO_LARGE');
         }
         return this.request<BulkNotifyResult>('POST', '/v1/notifications/bulk', {
             wallets: params.wallets,
@@ -155,6 +182,9 @@ export class Herald {
             category: params.category ?? 'defi',
             writeReceipt: params.receipt ?? true,
             idempotencyPrefix: params.idempotencyPrefix,
+            templateId: params.templateId,
+            telegramTemplateId: params.telegramTemplateId,
+            templateVariables: params.templateVariables,
         });
     }
 
@@ -167,6 +197,50 @@ export class Herald {
             'GET',
             `/v1/notifications/${notificationId}`,
         );
+    }
+
+    /**
+     * Poll until a notification reaches a terminal state (delivered, failed).
+     * @param notificationId - The ID returned from notify()
+     * @param timeoutMs - Max time to wait (default 30000ms)
+     * @param pollIntervalMs - Polling interval (default 2000ms)
+     */
+    async waitForDelivery(
+        notificationId: string,
+        timeoutMs = 30000,
+        pollIntervalMs = 2000,
+    ): Promise<NotificationStatusResult> {
+        const startTime = Date.now();
+        
+        while (Date.now() - startTime < timeoutMs) {
+            const status = await this.getStatus(notificationId);
+            if (status.status === 'delivered' || status.status === 'failed') {
+                return status;
+            }
+            // Sleep
+            await new Promise((resolve) => setTimeout(resolve, pollIntervalMs));
+        }
+        throw new HeraldError('Timeout waiting for terminal delivery state', 408, 'TIMEOUT');
+    }
+
+    /**
+     * Check if a specific wallet is currently registered with Herald.
+     */
+    async isRegistered(wallet: string): Promise<boolean> {
+        try {
+           const res: any = await this.request('GET', `/v1/wallets/${wallet}/status`);
+           return res.registered;
+        } catch (e: any) {
+           if (e.status === 404) return false;
+           throw e;
+        }
+    }
+
+    /**
+     * Get real-time usage metrics and quota limits.
+     */
+    async getUsage(): Promise<{ limit: number; remaining: number; resetAt: number }> {
+        return this.request('GET', `/v1/usage`);
     }
 
     /**
@@ -210,6 +284,8 @@ export class Herald {
         method: 'GET' | 'POST' | 'PUT' | 'DELETE',
         path: string,
         body?: Record<string, unknown>,
+        retries = 3,
+        backoffMs = 500
     ): Promise<T> {
         const url = `${this.baseUrl}${path}`;
         const controller = new AbortController();
@@ -219,7 +295,7 @@ export class Herald {
             const headers: Record<string, string> = {
                 'X-API-Key': this.apiKey,
                 'Content-Type': 'application/json',
-                'User-Agent': 'herald-sdk-ts/1.1.0',
+                'User-Agent': 'herald-sdk-ts/1.2.0',
             };
 
             const fetchOptions: RequestInit = {
@@ -235,21 +311,44 @@ export class Herald {
             const response = await fetch(url, fetchOptions);
 
             if (!response.ok) {
+                // Retry logic for 5xx and 429
+                if (retries > 0 && (response.status >= 500 || response.status === 429)) {
+                    clearTimeout(timeoutId);
+                    
+                    let retryDelay = backoffMs;
+                    if (response.status === 429) {
+                        const retryAfter = response.headers.get('Retry-After');
+                        if (retryAfter) {
+                            retryDelay = parseInt(retryAfter, 10) * 1000 || retryDelay;
+                        }
+                    }
+                    
+                    await new Promise(res => setTimeout(res, retryDelay));
+                    return this.request<T>(method, path, body, retries - 1, backoffMs * 2);
+                }
+
                 const errorBody = await response.text().catch(() => '');
                 let errorMessage = `Herald API error: ${response.status}`;
+                let errorCode: string | number = response.status;
+                const errorHeaders: Record<string, string> = {};
+                response.headers.forEach((value, key) => errorHeaders[key] = value);
+
                 try {
                     const parsed = JSON.parse(errorBody);
                     errorMessage = parsed.message || parsed.error || errorMessage;
+                    errorCode = parsed.code || errorCode;
                 } catch {
                     if (errorBody) errorMessage = errorBody;
                 }
-                const error = new Error(errorMessage) as any;
-                error.status = response.status;
-                error.code = response.status;
-                throw error;
+                throw new HeraldError(errorMessage, response.status, errorCode, errorHeaders);
             }
 
             return (await response.json()) as T;
+        } catch (e: any) {
+            if (e.name === 'AbortError') {
+                 throw new HeraldError(`Request timeout after ${this.timeout}ms`, 408, 'TIMEOUT');
+            }
+            throw e;
         } finally {
             clearTimeout(timeoutId);
         }
