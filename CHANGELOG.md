@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.2.2](https://github.com/heraldhq-protocol/herald-sdk-ts/compare/v1.2.1...v1.2.2) (2026-04-18)
 
+
+### Bug Fixes
+
+* **billing:** add cancel subscription to helio billing wrapper ([2ca430c](https://github.com/heraldhq-protocol/herald-sdk-ts/commit/2ca430c3adfc60f642275d6143c95d95b48bf5ff))
+* update the herald_privacy_registry program IDL ([1b42b28](https://github.com/heraldhq-protocol/herald-sdk-ts/commit/1b42b28f9a0fbfac4a5f103b2f8b5d28a31bc665))
+
+## [1.2.2](https://github.com/heraldhq-protocol/herald-sdk-ts/compare/v1.2.1...v1.2.2) (2026-04-18)
+
 ### Features
 * **billing:** add `cancelSubscription` method to the Helio billing wrapper, falling back to REST API if native is missing.
 
