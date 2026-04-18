@@ -5,6 +5,11 @@ All notable changes to the `@herald-protocol/sdk` will be documented in this fil
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.2](https://github.com/heraldhq-protocol/herald-sdk-ts/compare/v1.2.1...v1.2.2) (2026-04-18)
+
+### Features
+* **billing:** add `cancelSubscription` method to the Helio billing wrapper, falling back to REST API if native is missing.
+
 ## [1.2.1](https://github.com/heraldhq-protocol/herald-sdk-ts/compare/v1.2.0...v1.2.1) (2026-04-17)
 
 
