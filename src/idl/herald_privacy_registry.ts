@@ -107,6 +107,29 @@ export const HeraldIdl = {
       "args": []
     },
     {
+      "name": "migrateIdentityChannels",
+      "docs": [
+        "Lazy migration: set channel_email = true for pre-existing identities."
+      ],
+      "discriminator": [
+        57,
+        192,
+        149,
+        13,
+        211,
+        14,
+        112,
+        27
+      ],
+      "accounts": [
+        {
+          "name": "identityAccount",
+          "writable": true
+        }
+      ],
+      "args": []
+    },
+    {
       "name": "paySubscription",
       "docs": [
         "Pay for subscription on-chain with USDC or USDT (Phase 2).",
@@ -333,7 +356,8 @@ export const HeraldIdl = {
         {
           "name": "vaultAccount",
           "docs": [
-            "Herald treasury vault PDA."
+            "Herald treasury vault PDA.",
+            "TODO(#prod): Replace placeholder vault with real on-chain vault address before mainnet."
           ],
           "writable": true,
           "pda": {
@@ -425,7 +449,8 @@ export const HeraldIdl = {
         {
           "name": "identityAccount",
           "docs": [
-            "Identity PDA – created and owned by this program."
+            "Identity PDA – created and owned by this program.",
+            "Uses IdentityAccount::SPACE to accommodate all channel fields."
           ],
           "writable": true,
           "pda": {
@@ -580,6 +605,207 @@ export const HeraldIdl = {
       ]
     },
     {
+      "name": "registerSms",
+      "docs": [
+        "Register or update the SMS channel for an existing identity."
+      ],
+      "discriminator": [
+        74,
+        169,
+        36,
+        29,
+        68,
+        41,
+        235,
+        126
+      ],
+      "accounts": [
+        {
+          "name": "owner",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "identityAccount",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  105,
+                  100,
+                  101,
+                  110,
+                  116,
+                  105,
+                  116,
+                  121
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "owner"
+              }
+            ]
+          }
+        }
+      ],
+      "args": [
+        {
+          "name": "encryptedPhone",
+          "type": "bytes"
+        },
+        {
+          "name": "phoneHash",
+          "type": {
+            "array": [
+              "u8",
+              32
+            ]
+          }
+        },
+        {
+          "name": "nonceSms",
+          "type": {
+            "array": [
+              "u8",
+              24
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "registerTelegram",
+      "docs": [
+        "Register or update the Telegram channel for an existing identity."
+      ],
+      "discriminator": [
+        58,
+        196,
+        66,
+        237,
+        60,
+        81,
+        82,
+        248
+      ],
+      "accounts": [
+        {
+          "name": "owner",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "identityAccount",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  105,
+                  100,
+                  101,
+                  110,
+                  116,
+                  105,
+                  116,
+                  121
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "owner"
+              }
+            ]
+          }
+        }
+      ],
+      "args": [
+        {
+          "name": "encryptedTelegramId",
+          "type": "bytes"
+        },
+        {
+          "name": "telegramIdHash",
+          "type": {
+            "array": [
+              "u8",
+              32
+            ]
+          }
+        },
+        {
+          "name": "nonceTelegram",
+          "type": {
+            "array": [
+              "u8",
+              24
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "removeChannel",
+      "docs": [
+        "Permanently remove a channel's encrypted data (GDPR per-channel erasure)."
+      ],
+      "discriminator": [
+        92,
+        5,
+        181,
+        70,
+        37,
+        206,
+        219,
+        19
+      ],
+      "accounts": [
+        {
+          "name": "owner",
+          "signer": true
+        },
+        {
+          "name": "identityAccount",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  105,
+                  100,
+                  101,
+                  110,
+                  116,
+                  105,
+                  116,
+                  121
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "owner"
+              }
+            ]
+          }
+        }
+      ],
+      "args": [
+        {
+          "name": "channel",
+          "type": {
+            "defined": {
+              "name": "channelType"
+            }
+          }
+        }
+      ]
+    },
+    {
       "name": "renewSubscription",
       "docs": [
         "Renew (or initially activate) a protocol's monthly subscription.",
@@ -669,6 +895,73 @@ export const HeraldIdl = {
         }
       ],
       "args": []
+    },
+    {
+      "name": "updateChannelSettings",
+      "docs": [
+        "Toggle individual channels on/off without modifying encrypted data."
+      ],
+      "discriminator": [
+        149,
+        67,
+        63,
+        108,
+        132,
+        122,
+        95,
+        128
+      ],
+      "accounts": [
+        {
+          "name": "owner",
+          "signer": true
+        },
+        {
+          "name": "identityAccount",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  105,
+                  100,
+                  101,
+                  110,
+                  116,
+                  105,
+                  116,
+                  121
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "owner"
+              }
+            ]
+          }
+        }
+      ],
+      "args": [
+        {
+          "name": "channelEmail",
+          "type": {
+            "option": "bool"
+          }
+        },
+        {
+          "name": "channelTelegram",
+          "type": {
+            "option": "bool"
+          }
+        },
+        {
+          "name": "channelSms",
+          "type": {
+            "option": "bool"
+          }
+        }
+      ]
     },
     {
       "name": "updateIdentity",
@@ -1003,6 +1296,32 @@ export const HeraldIdl = {
   ],
   "events": [
     {
+      "name": "channelRemoved",
+      "discriminator": [
+        226,
+        140,
+        18,
+        241,
+        0,
+        35,
+        140,
+        52
+      ]
+    },
+    {
+      "name": "channelSettingsUpdated",
+      "discriminator": [
+        185,
+        148,
+        116,
+        148,
+        198,
+        14,
+        231,
+        155
+      ]
+    },
+    {
       "name": "identityDeleted",
       "discriminator": [
         44,
@@ -1172,6 +1491,19 @@ export const HeraldIdl = {
       ]
     },
     {
+      "name": "smsRegistered",
+      "discriminator": [
+        145,
+        36,
+        206,
+        101,
+        82,
+        239,
+        24,
+        169
+      ]
+    },
+    {
       "name": "subscriptionRenewed",
       "discriminator": [
         107,
@@ -1182,6 +1514,19 @@ export const HeraldIdl = {
         57,
         134,
         149
+      ]
+    },
+    {
+      "name": "telegramRegistered",
+      "discriminator": [
+        135,
+        16,
+        238,
+        229,
+        215,
+        59,
+        170,
+        162
       ]
     }
   ],
@@ -1320,6 +1665,46 @@ export const HeraldIdl = {
       "code": 6026,
       "name": "clockUnavailable",
       "msg": "Clock sysvar unavailable"
+    },
+    {
+      "code": 6027,
+      "name": "telegramIdEmpty",
+      "msg": "Encrypted Telegram ID must not be empty"
+    },
+    {
+      "code": 6028,
+      "name": "telegramIdTooLong",
+      "msg": "Encrypted Telegram ID exceeds maximum length of 80 bytes"
+    },
+    {
+      "code": 6029,
+      "name": "telegramNotRegistered",
+      "msg": "Telegram channel not registered; add Telegram before enabling it"
+    },
+    {
+      "code": 6030,
+      "name": "phoneEmpty",
+      "msg": "Encrypted phone number must not be empty"
+    },
+    {
+      "code": 6031,
+      "name": "phoneTooLong",
+      "msg": "Encrypted phone number exceeds maximum length of 65 bytes"
+    },
+    {
+      "code": 6032,
+      "name": "smsNotRegistered",
+      "msg": "SMS channel not registered; add phone before enabling it"
+    },
+    {
+      "code": 6033,
+      "name": "noActiveChannels",
+      "msg": "At least one delivery channel must remain active"
+    },
+    {
+      "code": 6034,
+      "name": "invalidChannelType",
+      "msg": "Invalid channel type: must be 0 (Telegram) or 1 (SMS)"
     }
   ],
   "types": [
@@ -1367,12 +1752,95 @@ export const HeraldIdl = {
       }
     },
     {
+      "name": "channelRemoved",
+      "docs": [
+        "Emitted when a channel's encrypted data is permanently removed (GDPR erasure)."
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "wallet",
+            "type": "pubkey"
+          },
+          {
+            "name": "channel",
+            "docs": [
+              "0 = Telegram, 1 = SMS"
+            ],
+            "type": "u8"
+          },
+          {
+            "name": "timestamp",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "channelSettingsUpdated",
+      "docs": [
+        "Emitted when channel enable/disable flags are toggled."
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "wallet",
+            "type": "pubkey"
+          },
+          {
+            "name": "channelEmail",
+            "type": "bool"
+          },
+          {
+            "name": "channelTelegram",
+            "type": "bool"
+          },
+          {
+            "name": "channelSms",
+            "type": "bool"
+          },
+          {
+            "name": "timestamp",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "channelType",
+      "docs": [
+        "Channel type enum for per-channel removal (GDPR erasure)."
+      ],
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "telegram"
+          },
+          {
+            "name": "sms"
+          }
+        ]
+      }
+    },
+    {
       "name": "identityAccount",
       "docs": [
-        "User identity account storing encrypted email and notification preferences.",
+        "User identity account storing encrypted email, channel data, and notification preferences.",
         "",
         "PDA Seeds: `[\"identity\", owner.key().as_ref()]`",
-        "Space: 8 (discriminator) + fields ≈ 342 bytes; allocated via InitSpace."
+        "",
+        "BACKWARD COMPATIBILITY:",
+        "The existing fields are unchanged. New channel fields are appended.",
+        "Programs using InitSpace will auto-include new fields in space calculation.",
+        "",
+        "PRIVACY INVARIANT:",
+        "ALL channel identifiers are stored as NaCl box ciphertext.",
+        "The pattern is identical for every channel:",
+        "[ephemeral_pubkey (32 bytes) || nacl_box_ciphertext]",
+        "Herald's Nitro Enclave decrypts using the wallet owner's X25519 key."
       ],
       "type": {
         "kind": "struct",
@@ -1463,6 +1931,96 @@ export const HeraldIdl = {
               "PDA bump seed."
             ],
             "type": "u8"
+          },
+          {
+            "name": "channelEmail",
+            "docs": [
+              "Email channel enabled (default true — all existing accounts)."
+            ],
+            "type": "bool"
+          },
+          {
+            "name": "channelTelegram",
+            "docs": [
+              "Telegram channel enabled."
+            ],
+            "type": "bool"
+          },
+          {
+            "name": "channelSms",
+            "docs": [
+              "SMS channel enabled."
+            ],
+            "type": "bool"
+          },
+          {
+            "name": "encryptedTelegramId",
+            "docs": [
+              "NaCl box encrypted Telegram chat_id (int64 as string).",
+              "Format: [ephemeral_pubkey(32) || box(chat_id_str, nonce_tg)].",
+              "Empty Vec = not registered.",
+              "Max 80 bytes: 32 ephemeral + ~16 overhead + max 10 char chat_id."
+            ],
+            "type": "bytes"
+          },
+          {
+            "name": "telegramIdHash",
+            "docs": [
+              "SHA-256 of the Telegram chat_id string.",
+              "Allows Herald to detect chat_id changes without decrypting."
+            ],
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "nonceTelegram",
+            "docs": [
+              "NaCl nonce for Telegram encryption (separate from email nonce)."
+            ],
+            "type": {
+              "array": [
+                "u8",
+                24
+              ]
+            }
+          },
+          {
+            "name": "encryptedPhone",
+            "docs": [
+              "NaCl box encrypted E.164 phone number (e.g. \"+14155552671\").",
+              "Format: [ephemeral_pubkey(32) || box(phone_e164, nonce_sms)].",
+              "Empty Vec = not registered.",
+              "Max 65 bytes: 32 ephemeral + ~16 overhead + max 15 char E.164."
+            ],
+            "type": "bytes"
+          },
+          {
+            "name": "phoneHash",
+            "docs": [
+              "SHA-256 of the E.164 phone number string."
+            ],
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "nonceSms",
+            "docs": [
+              "NaCl nonce for phone encryption."
+            ],
+            "type": {
+              "array": [
+                "u8",
+                24
+              ]
+            }
           }
         ]
       }
@@ -1966,6 +2524,34 @@ export const HeraldIdl = {
       }
     },
     {
+      "name": "smsRegistered",
+      "docs": [
+        "Emitted when an SMS channel is registered or updated for an identity."
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "wallet",
+            "type": "pubkey"
+          },
+          {
+            "name": "phoneHash",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "timestamp",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
       "name": "subscriptionRenewed",
       "docs": [
         "Emitted by BOTH `renew_subscription` (Helio path) AND `pay_subscription` (USDC path)."
@@ -2068,6 +2654,34 @@ export const HeraldIdl = {
               "PDA bump."
             ],
             "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "telegramRegistered",
+      "docs": [
+        "Emitted when a Telegram channel is registered or updated for an identity."
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "wallet",
+            "type": "pubkey"
+          },
+          {
+            "name": "telegramIdHash",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "timestamp",
+            "type": "i64"
           }
         ]
       }
