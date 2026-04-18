@@ -50,6 +50,8 @@ export interface CheckoutResult {
     checkoutUrl: string;
     /** Helio Paylink ID for tracking. */
     paylinkId: string;
+    /** Helio transaction/payment ID for tracking (alias for paylinkId). */
+    transactionId: string;
 }
 
 /** Tier details for dynamic fallback. */
@@ -134,6 +136,7 @@ export class HelioBilling {
         return {
             checkoutUrl: paylink.url,
             paylinkId: paylink.id,
+            transactionId: paylink.id,
         };
     }
 
@@ -166,7 +169,41 @@ export class HelioBilling {
         return {
             checkoutUrl: paylink.url,
             paylinkId: paylink.id,
+            transactionId: paylink.id,
         };
+    }
+
+    /**
+     * Cancel an active Helio subscription or paylink using its paylinkId / transactionId.
+     * Fallbacks to REST API if the SDK does not natively expose deletion.
+     */
+    async cancelSubscription(paylinkId: string): Promise<boolean> {
+        const sdk = await this.getSDK();
+        try {
+            // Attempt to use native SDK deletion if it exists
+            if (sdk.paylink && typeof sdk.paylink.delete === 'function') {
+                await sdk.paylink.delete(paylinkId);
+                return true;
+            }
+
+            // Fallback to fetch API
+            const baseUrl = this.config.network === 'devnet' ? 'https://dev.api.hel.io/v1' : 'https://api.hel.io/v1';
+            const response = await fetch(`${baseUrl}/paylink/${paylinkId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${this.config.secretKey}`,
+                }
+            });
+
+            if (!response.ok) {
+                console.warn(`Failed to cancel Helio paylink ${paylinkId} via API: ${response.statusText}`);
+                return false;
+            }
+            return true;
+        } catch (error) {
+            console.error(`Error cancelling Helio subscription:`, error);
+            return false;
+        }
     }
 
     static getAllTiers() {
