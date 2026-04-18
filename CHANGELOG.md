@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.2.1](https://github.com/heraldhq-protocol/herald-sdk-ts/compare/v1.2.0...v1.2.1) (2026-04-17)
 
+
+### Bug Fixes
+
+* **ci:** remove provenance from npm publish for private repo ([ea4bd02](https://github.com/heraldhq-protocol/herald-sdk-ts/commit/ea4bd027e05c78926e4f23a9810c6be205cbf058))
+
+## [1.2.1](https://github.com/heraldhq-protocol/herald-sdk-ts/compare/v1.2.0...v1.2.1) (2026-04-17)
+
 ### Features
 * **channels:** expose `ChannelUserClient` with `registerTelegram`, `registerSms`, `buildTelegramRegistrationTx`, and `buildSmsRegistrationTx` methods for multi-channel registration.
 
