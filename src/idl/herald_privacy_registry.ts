@@ -130,6 +130,59 @@ export const HeraldIdl = {
       "args": []
     },
     {
+      "name": "migrateNotificationKeySpace",
+      "docs": [
+        "Migrate existing account to new size for notification key fields."
+      ],
+      "discriminator": [
+        201,
+        133,
+        78,
+        188,
+        71,
+        103,
+        198,
+        61
+      ],
+      "accounts": [
+        {
+          "name": "owner",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "identityAccount",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  105,
+                  100,
+                  101,
+                  110,
+                  116,
+                  105,
+                  116,
+                  121
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "owner"
+              }
+            ]
+          }
+        },
+        {
+          "name": "systemProgram",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
       "name": "paySubscription",
       "docs": [
         "Pay for subscription on-chain with USDC or USDT (Phase 2).",
@@ -526,6 +579,88 @@ export const HeraldIdl = {
       ]
     },
     {
+      "name": "registerNotificationKey",
+      "docs": [
+        "Register a sealed X25519 notification key on an existing identity.",
+        "The sealed blob is only decryptable by the Herald Nitro Enclave."
+      ],
+      "discriminator": [
+        50,
+        219,
+        164,
+        245,
+        109,
+        69,
+        75,
+        173
+      ],
+      "accounts": [
+        {
+          "name": "owner",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "identityAccount",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  105,
+                  100,
+                  101,
+                  110,
+                  116,
+                  105,
+                  116,
+                  121
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "owner"
+              }
+            ]
+          }
+        }
+      ],
+      "args": [
+        {
+          "name": "sealedX25519Pubkey",
+          "type": {
+            "array": [
+              "u8",
+              48
+            ]
+          }
+        },
+        {
+          "name": "senderX25519Pubkey",
+          "type": {
+            "array": [
+              "u8",
+              32
+            ]
+          }
+        },
+        {
+          "name": "nonce",
+          "type": {
+            "array": [
+              "u8",
+              24
+            ]
+          }
+        },
+        {
+          "name": "version",
+          "type": "u8"
+        }
+      ]
+    },
+    {
       "name": "registerProtocol",
       "docs": [
         "Register a new DeFi protocol. Only callable by the Herald authority."
@@ -868,6 +1003,135 @@ export const HeraldIdl = {
         }
       ],
       "args": []
+    },
+    {
+      "name": "revokeNotificationKey",
+      "docs": [
+        "Revoke (zero out) a notification key. Identity data remains intact."
+      ],
+      "discriminator": [
+        83,
+        159,
+        197,
+        39,
+        253,
+        247,
+        210,
+        84
+      ],
+      "accounts": [
+        {
+          "name": "owner",
+          "signer": true
+        },
+        {
+          "name": "identityAccount",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  105,
+                  100,
+                  101,
+                  110,
+                  116,
+                  105,
+                  116,
+                  121
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "owner"
+              }
+            ]
+          }
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "rotateNotificationKey",
+      "docs": [
+        "Rotate an existing notification key. Increments rotation counter."
+      ],
+      "discriminator": [
+        17,
+        178,
+        55,
+        121,
+        31,
+        32,
+        163,
+        40
+      ],
+      "accounts": [
+        {
+          "name": "owner",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "identityAccount",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  105,
+                  100,
+                  101,
+                  110,
+                  116,
+                  105,
+                  116,
+                  121
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "owner"
+              }
+            ]
+          }
+        }
+      ],
+      "args": [
+        {
+          "name": "newSealedX25519Pubkey",
+          "type": {
+            "array": [
+              "u8",
+              48
+            ]
+          }
+        },
+        {
+          "name": "newSenderX25519Pubkey",
+          "type": {
+            "array": [
+              "u8",
+              32
+            ]
+          }
+        },
+        {
+          "name": "newNonce",
+          "type": {
+            "array": [
+              "u8",
+              24
+            ]
+          }
+        },
+        {
+          "name": "version",
+          "type": "u8"
+        }
+      ]
     },
     {
       "name": "suspendProtocol",
@@ -1374,6 +1638,45 @@ export const HeraldIdl = {
       ]
     },
     {
+      "name": "notificationKeyRegistered",
+      "discriminator": [
+        142,
+        89,
+        128,
+        116,
+        174,
+        19,
+        200,
+        201
+      ]
+    },
+    {
+      "name": "notificationKeyRevoked",
+      "discriminator": [
+        7,
+        155,
+        84,
+        65,
+        251,
+        27,
+        17,
+        173
+      ]
+    },
+    {
+      "name": "notificationKeyRotated",
+      "discriminator": [
+        8,
+        99,
+        153,
+        174,
+        178,
+        115,
+        27,
+        156
+      ]
+    },
+    {
       "name": "paymentReceived",
       "discriminator": [
         238,
@@ -1705,6 +2008,41 @@ export const HeraldIdl = {
       "code": 6034,
       "name": "invalidChannelType",
       "msg": "Invalid channel type: must be 0 (Telegram) or 1 (SMS)"
+    },
+    {
+      "code": 6035,
+      "name": "zeroSealedPubkey",
+      "msg": "Sealed pubkey cannot be all zeros — invalid key material"
+    },
+    {
+      "code": 6036,
+      "name": "zeroNotificationNonce",
+      "msg": "Notification nonce cannot be all zeros — replay attack risk"
+    },
+    {
+      "code": 6037,
+      "name": "unsupportedNotificationKeyVersion",
+      "msg": "Unsupported notification key version"
+    },
+    {
+      "code": 6038,
+      "name": "maxNotificationKeyRotationsExceeded",
+      "msg": "Max notification key rotations reached — revoke and re-register"
+    },
+    {
+      "code": 6039,
+      "name": "notificationNonceReuse",
+      "msg": "Notification nonce must differ from current nonce on rotation"
+    },
+    {
+      "code": 6040,
+      "name": "notificationKeyNotRegistered",
+      "msg": "No notification key registered — cannot rotate or revoke"
+    },
+    {
+      "code": 6041,
+      "name": "identityNotRegistered",
+      "msg": "Identity account must be registered before adding a notification key"
     }
   ],
   "types": [
@@ -2021,6 +2359,70 @@ export const HeraldIdl = {
                 24
               ]
             }
+          },
+          {
+            "name": "sealedX25519Pubkey",
+            "docs": [
+              "NaCl box ciphertext of user's X25519 pubkey.",
+              "Sealed with Herald Enclave's wrapping pubkey. Only the enclave can unwrap.",
+              "48 bytes = 32 (plaintext X25519 pub) + 16 (Poly1305 MAC).",
+              "All zeros = not registered."
+            ],
+            "type": {
+              "array": [
+                "u8",
+                48
+              ]
+            }
+          },
+          {
+            "name": "senderX25519Pubkey",
+            "docs": [
+              "User's X25519 public key in plaintext.",
+              "Needed by the enclave for NaCl box.open (as the \"sender\" pubkey).",
+              "Safe to store unencrypted — it reveals nothing about notification content."
+            ],
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "notificationNonce",
+            "docs": [
+              "NaCl box nonce used during sealing. Stored so the enclave can unwrap."
+            ],
+            "type": {
+              "array": [
+                "u8",
+                24
+              ]
+            }
+          },
+          {
+            "name": "notificationKeyVersion",
+            "docs": [
+              "Schema version for the notification key format.",
+              "Allows the enclave to handle format migrations gracefully."
+            ],
+            "type": "u8"
+          },
+          {
+            "name": "notificationKeyUpdatedAt",
+            "docs": [
+              "Unix timestamp of last notification key registration or rotation."
+            ],
+            "type": "i64"
+          },
+          {
+            "name": "notificationKeyRotationCount",
+            "docs": [
+              "Number of times this notification key has been rotated.",
+              "Capped at MAX_NOTIFICATION_KEY_ROTATIONS to prevent abuse."
+            ],
+            "type": "u32"
           }
         ]
       }
@@ -2159,6 +2561,75 @@ export const HeraldIdl = {
           },
           {
             "name": "timestamp",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "notificationKeyRegistered",
+      "docs": [
+        "Emitted when a user registers their sealed X25519 notification key."
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "wallet",
+            "type": "pubkey"
+          },
+          {
+            "name": "version",
+            "type": "u8"
+          },
+          {
+            "name": "registeredAt",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "notificationKeyRevoked",
+      "docs": [
+        "Emitted when a user revokes (zeroes out) their notification key."
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "wallet",
+            "type": "pubkey"
+          },
+          {
+            "name": "revokedAt",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "notificationKeyRotated",
+      "docs": [
+        "Emitted when a user rotates their sealed notification key."
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "wallet",
+            "type": "pubkey"
+          },
+          {
+            "name": "version",
+            "type": "u8"
+          },
+          {
+            "name": "rotationCount",
+            "type": "u32"
+          },
+          {
+            "name": "rotatedAt",
             "type": "i64"
           }
         ]

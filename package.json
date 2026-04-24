@@ -1,6 +1,6 @@
 {
   "name": "@herald-protocol/sdk",
-  "version": "1.2.3",
+  "version": "1.3.0",
   "description": "TypeScript SDK for the Herald Privacy Registry Anchor program",
   "license": "MIT",
   "type": "module",
@@ -67,6 +67,11 @@
       "types": "./dist/channels/index.d.ts",
       "import": "./dist/channels/index.js",
       "require": "./dist/channels/index.cjs"
+    },
+    "./notification-keys": {
+      "types": "./dist/notification-keys/index.d.ts",
+      "import": "./dist/notification-keys/index.js",
+      "require": "./dist/notification-keys/index.cjs"
     }
   },
   "main": "./dist/index.cjs",
@@ -104,6 +109,7 @@
     "ed2curve": "^0.3.0",
     "eventemitter3": "^5.0.1",
     "prom-client": "^15.1.3",
+    "@noble/hashes": "^1.7.2",
     "tweetnacl": "^1.0.3",
     "tweetnacl-util": "^0.15.1",
     "uuid": "^10.0.0",
