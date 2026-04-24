@@ -28,13 +28,20 @@ export abstract class BaseClient {
      * @param config - The Herald configuration object containing RPC URL, cluster, and commitment.
      */
     constructor(config: HeraldConfig) {
+        const rpcUrl = config.rpcUrl || process.env.HERALD_SOLANA_RPC_URL;
+        if (!rpcUrl) {
+            throw new Error(
+                'RPC URL is required. Provide rpcUrl in config or set HERALD_SOLANA_RPC_URL environment variable.'
+            );
+        }
+
         this.config = {
             cluster: config.cluster ?? 'mainnet-beta',
             commitment: config.commitment ?? 'confirmed',
             maxRetries: config.maxRetries ?? 3,
-            rpcUrl: config.rpcUrl,
+            rpcUrl,
             programId: config.programId ?? HERALD_PROGRAM_ID.toBase58(),
-            lightRpcUrl: config.lightRpcUrl ?? config.rpcUrl,
+            lightRpcUrl: config.lightRpcUrl ?? process.env.HERALD_SOLANA_RPC_URL ?? rpcUrl,
         };
 
         this.connection = new Connection(this.config.rpcUrl, this.config.commitment);

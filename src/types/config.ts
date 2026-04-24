@@ -6,7 +6,7 @@ export type Commitment = 'processed' | 'confirmed' | 'finalized';
 
 export interface HeraldConfig {
     /** Solana RPC endpoint. MUST support Light Protocol methods for receipt ops. */
-    rpcUrl: string;
+    rpcUrl?: string;
     /** Cluster — determines default program ID and Light tree addresses. */
     cluster?: SolanaCluster;
     /** Override program ID (useful for devnet testing). Default: production ID. */
@@ -15,7 +15,7 @@ export interface HeraldConfig {
     commitment?: Commitment;
     /** Max retries for transaction confirmation. @default 3 */
     maxRetries?: number;
-    /** Custom Light Protocol RPC URL if different from primary rpcUrl. */
+    /** Custom Light Protocol RPC URL if different from primary rpcUrl. Falls back to HERALD_SOLANA_RPC_URL env var if not set. */
     lightRpcUrl?: string;
 }
 
