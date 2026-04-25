@@ -1,5 +1,23 @@
 import { PublicKey } from "@solana/web3.js";
 
+// ╔═══════════════════════════════════════════════════════════════════════════╗
+// ║  TODO(#prod): PRE-MAINNET CREDENTIAL CHECKLIST                          ║
+// ║                                                                          ║
+// ║  Before deploying to mainnet, replace ALL placeholder values below:      ║
+// ║                                                                          ║
+// ║  1. HERALD_AUTHORITY         — Set to real KMS-backed authority pubkey   ║
+// ║  2. HERALD_ENCLAVE_WRAPPING_PUBKEY — Set after enclave keygen ceremony  ║
+// ║  3. HERALD_RECEIPT_MERKLE_TREE     — Set after Light Protocol tree init ║
+// ║                                                                          ║
+// ║  Also update in herald-privacy-registry/src/constants.rs:               ║
+// ║  4. HERALD_AUTHORITY         — Must match this SDK value                ║
+// ║  5. HERALD_TREASURY          — Set to real Squads multisig PDA          ║
+// ║                                                                          ║
+// ║  And in herald-user-portal/.env.prod:                                   ║
+// ║  6. NEXT_PUBLIC_ENCLAVE_TEST_PUBKEY_HEX — Remove (prod uses SDK const) ║
+// ║  7. NEXT_PUBLIC_ENCLAVE_MODE            — Remove or set to "production" ║
+// ╚═══════════════════════════════════════════════════════════════════════════╝
+
 /** Production program ID. Matches on-chain: 2pxjAf8tLCakKVDuN4vY51B5TeaEQk4koPuk9NZvWqdf */
 export const HERALD_PROGRAM_ID = new PublicKey(
   "2pxjAf8tLCakKVDuN4vY51B5TeaEQk4koPuk9NZvWqdf",
@@ -8,7 +26,9 @@ export const HERALD_PROGRAM_ID = new PublicKey(
 /**
  * HERALD_AUTHORITY public key.
  * Server-side signing key stored in AWS KMS.
- * Placeholder [0;32] — MUST be updated before mainnet deployment.
+ *
+ * TODO(#prod): Replace with real KMS-backed authority pubkey before mainnet.
+ * Current value is the system program (all zeros) — placeholder only.
  */
 export const HERALD_AUTHORITY = new PublicKey(
   "11111111111111111111111111111111",
@@ -40,7 +60,11 @@ export const TIER_SEND_LIMITS: readonly bigint[] = [
   1_000_000n,
 ] as const;
 
-/** Herald's dedicated Light Protocol Merkle tree for delivery receipts. */
+/**
+ * Herald's dedicated Light Protocol Merkle tree for delivery receipts.
+ *
+ * TODO(#prod): Replace with real Merkle tree address after tree creation on mainnet.
+ */
 export const HERALD_RECEIPT_MERKLE_TREE = new PublicKey(
   "11111111111111111111111111111111", // placeholder — set after tree creation
 );
@@ -52,7 +76,13 @@ export const HERALD_RECEIPT_MERKLE_TREE = new PublicKey(
  * NOT secret — this is the enclave's PUBLIC key used for sealing.
  * Updated via governance when the enclave keypair rotates.
  *
- * ⚠️ Placeholder — TODO: populate after first enclave keygen ceremony.
+ * TODO(#prod): Populate with the real 32-byte X25519 pubkey after the first
+ * enclave keygen ceremony. Without this, production clients cannot seal
+ * notification keys and will throw EnclaveKeyUnavailableError.
+ *
+ * To generate: run the enclave keygen script, then paste the hex output here
+ * converted to a Uint8Array, e.g.:
+ *   new Uint8Array([0xab, 0xcd, ...])
  */
 export const HERALD_ENCLAVE_WRAPPING_PUBKEY = new Uint8Array(32);
 

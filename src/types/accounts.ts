@@ -80,7 +80,7 @@ export interface IdentityAccount {
     /** NaCl nonce for phone encryption. */
     nonceSms: Uint8Array; // [u8; 24]
 
-    // ── Notification Key (Option C: Sealed PDA + Enclave-Only Access) ──
+    // ── Notification Key (Sealed PDA + Enclave-Only Access) ──
     /** NaCl box ciphertext of user's X25519 pubkey. 48 bytes = 32 + 16 MAC. All zeros = not registered. */
     sealedX25519Pubkey: Uint8Array; // [u8; 48]
     /** User's X25519 public key in plaintext. Needed by enclave for box.open. */

@@ -21,7 +21,8 @@ The SDK is organized into three primary clients tailored for different consumers
 1. **`UserClient`**: Used by frontend applications (React, Next.js, Vue) to let end-users register their identities, update notification preferences, or delete their accounts using their own wallet signature.
 2. **`ReadClient`**: A signing-free client useful for quickly checking if wallets are registered, or validating if a protocol is eligible to send messages. Safe for both browsers and node backends.
 3. **`AuthorityClient`**: Specialized client used EXCLUSIVELY by the Herald Node Backend. Requires the global `HERALD_AUTHORITY` signature to manage protocol lifecycle and append encrypted receipts.
-4. **`Billing Module`**: A dedicated suite of clients (`BillingReadClient`, `HelioClient`, `PaymentClient`) located under `@herald-protocol/sdk/billing` to manage protocol subscription tiers, check quotas, and execute on-chain usage payments.
+4. **`NotificationKeyClient`**: Manages end-to-end encryption notification keys. Derives deterministic X25519 keypairs from wallet signatures, seals them for the Herald Enclave, and builds on-chain register/rotate/revoke instructions.
+5. **`Billing Module`**: A dedicated suite of clients (`BillingReadClient`, `HelioClient`, `PaymentClient`) located under `@herald-protocol/sdk/billing` to manage protocol subscription tiers, check quotas, and execute on-chain usage payments.
 
 ---
 
@@ -183,6 +184,51 @@ listener.start();
 
 // Cleanup when component unmounts
 await listener.stop();
+```
+
+---
+
+### 6. Notification Key Lifecycle (End-to-End Encryption)
+
+The `NotificationKeyClient` manages X25519 keypairs that enable end-to-end encrypted notifications. The user's private key is derived deterministically from a wallet signature and never leaves the browser.
+
+```typescript
+import { NotificationKeyClient } from '@herald-protocol/sdk';
+
+const keyClient = new NotificationKeyClient(config);
+
+// Register a new notification key (derives keypair, seals for enclave, submits tx)
+const { ix } = await keyClient.buildRegisterKeyIx(walletAdapter);
+
+// Rotate an existing key (generates new keypair, re-seals)
+const { ix: rotateIx } = await keyClient.buildRotateKeyIx(walletAdapter);
+
+// Revoke key (zeroes on-chain data)
+const revokeIx = await keyClient.buildRevokeKeyIx(ownerPubkey);
+
+// Migrate old accounts to support notification keys
+const migrateIx = await keyClient.buildMigrateSpaceIx(ownerPubkey);
+```
+
+#### Crypto Primitives (Browser-Only)
+
+```typescript
+import {
+  deriveX25519Keypair,
+  sealX25519PubkeyForEnclave,
+  decryptNotification,
+  decryptNotificationBody,
+} from '@herald-protocol/sdk';
+
+// Derive deterministic X25519 keypair from wallet signature
+const keypair = await deriveX25519Keypair(walletAdapter);
+
+// Seal user's pubkey for the Herald Enclave
+const { sealedPubkey, senderPubkey, nonce } = await sealX25519PubkeyForEnclave(walletAdapter);
+
+// Decrypt an incoming notification
+const body = await decryptNotificationBody(walletAdapter, ciphertext, nonce);
+console.log(body.subject, body.message);
 ```
 
 ---
