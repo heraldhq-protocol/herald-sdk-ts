@@ -26,12 +26,9 @@ export const HERALD_PROGRAM_ID = new PublicKey(
 /**
  * HERALD_AUTHORITY public key.
  * Server-side signing key stored in AWS KMS.
- *
- * TODO(#prod): Replace with real KMS-backed authority pubkey before mainnet.
- * Current value is the system program (all zeros) — placeholder only.
  */
 export const HERALD_AUTHORITY = new PublicKey(
-  "11111111111111111111111111111111",
+  "4K2GVdXoetgHoho5NJzHo5J5YazPNR1t6GS7jPpxUREA",
 );
 
 /** Subscription period duration in seconds (30 days). */
