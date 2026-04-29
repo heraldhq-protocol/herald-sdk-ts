@@ -1,31 +1,22 @@
 /**
  * Herald Privacy Registry IDL type definition.
  *
- * This provides the Anchor IDL type that the SDK uses to interact with
- * the on-chain program. Since we don't have a generated IDL JSON from
- * `anchor build`, this module exports the program metadata needed by
- * the Anchor Program class.
+ * Auto-generated from anchor build output.
+ * Do not edit manually - run `anchor build` in herald-privacy-registry and copy.
  */
-
-/** Program IDL name. */
 export const HERALD_IDL_NAME = 'herald_privacy_registry' as const;
 
-/**
- * Minimal IDL structure for programmatic Anchor usage.
- * The SDK uses Anchor's `.methods` builder which needs account/instruction
- * names. Full IDL can be generated from `anchor build` when available.
- */
 export const HeraldIdl = {
   "address": "2pxjAf8tLCakKVDuN4vY51B5TeaEQk4koPuk9NZvWqdf",
   "metadata": {
-    "name": "heraldPrivacyRegistry",
+    "name": "herald_privacy_registry",
     "version": "1.0.0",
     "spec": "0.1.0",
     "description": "Herald Privacy Registry – encrypted identity, protocol registry, and ZK delivery receipts"
   },
   "instructions": [
     {
-      "name": "deactivateProtocol",
+      "name": "deactivate_protocol",
       "docs": [
         "Deactivate a protocol (soft deactivation). Only callable by the Herald authority."
       ],
@@ -45,14 +36,14 @@ export const HeraldIdl = {
           "signer": true
         },
         {
-          "name": "protocolAccount",
+          "name": "protocol_account",
           "writable": true
         }
       ],
       "args": []
     },
     {
-      "name": "deleteIdentity",
+      "name": "delete_identity",
       "docs": [
         "Delete (close) a user identity account. Rent is refunded to the owner."
       ],
@@ -76,7 +67,7 @@ export const HeraldIdl = {
           "signer": true
         },
         {
-          "name": "identityAccount",
+          "name": "identity_account",
           "docs": [
             "Identity PDA – closed and rent returned to `owner`."
           ],
@@ -107,7 +98,7 @@ export const HeraldIdl = {
       "args": []
     },
     {
-      "name": "migrateIdentityChannels",
+      "name": "migrate_identity_channels",
       "docs": [
         "Lazy migration: set channel_email = true for pre-existing identities."
       ],
@@ -123,14 +114,14 @@ export const HeraldIdl = {
       ],
       "accounts": [
         {
-          "name": "identityAccount",
+          "name": "identity_account",
           "writable": true
         }
       ],
       "args": []
     },
     {
-      "name": "migrateNotificationKeySpace",
+      "name": "migrate_notification_key_space",
       "docs": [
         "Migrate existing account to new size for notification key fields."
       ],
@@ -151,7 +142,7 @@ export const HeraldIdl = {
           "signer": true
         },
         {
-          "name": "identityAccount",
+          "name": "identity_account",
           "writable": true,
           "pda": {
             "seeds": [
@@ -176,14 +167,14 @@ export const HeraldIdl = {
           }
         },
         {
-          "name": "systemProgram",
+          "name": "system_program",
           "address": "11111111111111111111111111111111"
         }
       ],
       "args": []
     },
     {
-      "name": "paySubscription",
+      "name": "pay_subscription",
       "docs": [
         "Pay for subscription on-chain with USDC or USDT (Phase 2).",
         "Called directly by the protocol admin wallet."
@@ -208,20 +199,20 @@ export const HeraldIdl = {
           "signer": true
         },
         {
-          "name": "protocolAccount",
+          "name": "protocol_account",
           "docs": [
             "Protocol registry account being renewed."
           ],
           "writable": true
         },
         {
-          "name": "paymentMint",
+          "name": "payment_mint",
           "docs": [
             "Payment token mint — must be USDC or USDT."
           ]
         },
         {
-          "name": "payerTokenAccount",
+          "name": "payer_token_account",
           "docs": [
             "Payer's ATA for the payment token."
           ],
@@ -271,7 +262,7 @@ export const HeraldIdl = {
               },
               {
                 "kind": "account",
-                "path": "paymentMint"
+                "path": "payment_mint"
               }
             ],
             "program": {
@@ -314,7 +305,7 @@ export const HeraldIdl = {
           }
         },
         {
-          "name": "vaultTokenAccount",
+          "name": "vault_token_account",
           "docs": [
             "Herald's vault ATA for the payment token."
           ],
@@ -323,7 +314,7 @@ export const HeraldIdl = {
             "seeds": [
               {
                 "kind": "account",
-                "path": "vaultAccount"
+                "path": "vault_account"
               },
               {
                 "kind": "const",
@@ -364,7 +355,7 @@ export const HeraldIdl = {
               },
               {
                 "kind": "account",
-                "path": "paymentMint"
+                "path": "payment_mint"
               }
             ],
             "program": {
@@ -407,7 +398,7 @@ export const HeraldIdl = {
           }
         },
         {
-          "name": "vaultAccount",
+          "name": "vault_account",
           "docs": [
             "Herald treasury vault PDA.",
             "TODO(#prod): Replace placeholder vault with real on-chain vault address before mainnet."
@@ -429,15 +420,15 @@ export const HeraldIdl = {
           }
         },
         {
-          "name": "tokenProgram",
+          "name": "token_program",
           "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
         },
         {
-          "name": "associatedTokenProgram",
+          "name": "associated_token_program",
           "address": "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
         },
         {
-          "name": "systemProgram",
+          "name": "system_program",
           "address": "11111111111111111111111111111111"
         }
       ],
@@ -449,7 +440,7 @@ export const HeraldIdl = {
       ]
     },
     {
-      "name": "reactivateProtocol",
+      "name": "reactivate_protocol",
       "docs": [
         "Reactivate a deactivated (non-suspended) protocol. Only callable by the Herald authority."
       ],
@@ -469,14 +460,14 @@ export const HeraldIdl = {
           "signer": true
         },
         {
-          "name": "protocolAccount",
+          "name": "protocol_account",
           "writable": true
         }
       ],
       "args": []
     },
     {
-      "name": "registerIdentity",
+      "name": "register_identity",
       "docs": [
         "Register a new user identity with encrypted email and notification preferences."
       ],
@@ -500,7 +491,7 @@ export const HeraldIdl = {
           "signer": true
         },
         {
-          "name": "identityAccount",
+          "name": "identity_account",
           "docs": [
             "Identity PDA – created and owned by this program.",
             "Uses IdentityAccount::SPACE to accommodate all channel fields."
@@ -529,17 +520,17 @@ export const HeraldIdl = {
           }
         },
         {
-          "name": "systemProgram",
+          "name": "system_program",
           "address": "11111111111111111111111111111111"
         }
       ],
       "args": [
         {
-          "name": "encryptedEmail",
+          "name": "encrypted_email",
           "type": "bytes"
         },
         {
-          "name": "emailHash",
+          "name": "email_hash",
           "type": {
             "array": [
               "u8",
@@ -557,29 +548,29 @@ export const HeraldIdl = {
           }
         },
         {
-          "name": "optInAll",
+          "name": "opt_in_all",
           "type": "bool"
         },
         {
-          "name": "optInDefi",
+          "name": "opt_in_defi",
           "type": "bool"
         },
         {
-          "name": "optInGovernance",
+          "name": "opt_in_governance",
           "type": "bool"
         },
         {
-          "name": "optInMarketing",
+          "name": "opt_in_marketing",
           "type": "bool"
         },
         {
-          "name": "digestMode",
+          "name": "digest_mode",
           "type": "bool"
         }
       ]
     },
     {
-      "name": "registerNotificationKey",
+      "name": "register_notification_key",
       "docs": [
         "Register a sealed X25519 notification key on an existing identity.",
         "The sealed blob is only decryptable by the Herald Nitro Enclave."
@@ -601,7 +592,7 @@ export const HeraldIdl = {
           "signer": true
         },
         {
-          "name": "identityAccount",
+          "name": "identity_account",
           "writable": true,
           "pda": {
             "seeds": [
@@ -628,7 +619,7 @@ export const HeraldIdl = {
       ],
       "args": [
         {
-          "name": "sealedX25519Pubkey",
+          "name": "sealed_x25519_pubkey",
           "type": {
             "array": [
               "u8",
@@ -637,7 +628,7 @@ export const HeraldIdl = {
           }
         },
         {
-          "name": "senderX25519Pubkey",
+          "name": "sender_x25519_pubkey",
           "type": {
             "array": [
               "u8",
@@ -661,7 +652,7 @@ export const HeraldIdl = {
       ]
     },
     {
-      "name": "registerProtocol",
+      "name": "register_protocol",
       "docs": [
         "Register a new DeFi protocol. Only callable by the Herald authority."
       ],
@@ -685,7 +676,7 @@ export const HeraldIdl = {
           "signer": true
         },
         {
-          "name": "protocolAccount",
+          "name": "protocol_account",
           "docs": [
             "Protocol registry PDA – seeded by the protocol's wallet address."
           ],
@@ -707,25 +698,25 @@ export const HeraldIdl = {
               },
               {
                 "kind": "account",
-                "path": "protocolPubkey"
+                "path": "protocol_pubkey"
               }
             ]
           }
         },
         {
-          "name": "protocolPubkey",
+          "name": "protocol_pubkey",
           "docs": [
             "The protocol's wallet address (not required to sign)."
           ]
         },
         {
-          "name": "systemProgram",
+          "name": "system_program",
           "address": "11111111111111111111111111111111"
         }
       ],
       "args": [
         {
-          "name": "nameHash",
+          "name": "name_hash",
           "type": {
             "array": [
               "u8",
@@ -740,7 +731,7 @@ export const HeraldIdl = {
       ]
     },
     {
-      "name": "registerSms",
+      "name": "register_sms",
       "docs": [
         "Register or update the SMS channel for an existing identity."
       ],
@@ -761,7 +752,7 @@ export const HeraldIdl = {
           "signer": true
         },
         {
-          "name": "identityAccount",
+          "name": "identity_account",
           "writable": true,
           "pda": {
             "seeds": [
@@ -788,11 +779,11 @@ export const HeraldIdl = {
       ],
       "args": [
         {
-          "name": "encryptedPhone",
+          "name": "encrypted_phone",
           "type": "bytes"
         },
         {
-          "name": "phoneHash",
+          "name": "phone_hash",
           "type": {
             "array": [
               "u8",
@@ -801,7 +792,7 @@ export const HeraldIdl = {
           }
         },
         {
-          "name": "nonceSms",
+          "name": "nonce_sms",
           "type": {
             "array": [
               "u8",
@@ -812,7 +803,7 @@ export const HeraldIdl = {
       ]
     },
     {
-      "name": "registerTelegram",
+      "name": "register_telegram",
       "docs": [
         "Register or update the Telegram channel for an existing identity."
       ],
@@ -833,7 +824,7 @@ export const HeraldIdl = {
           "signer": true
         },
         {
-          "name": "identityAccount",
+          "name": "identity_account",
           "writable": true,
           "pda": {
             "seeds": [
@@ -860,11 +851,11 @@ export const HeraldIdl = {
       ],
       "args": [
         {
-          "name": "encryptedTelegramId",
+          "name": "encrypted_telegram_id",
           "type": "bytes"
         },
         {
-          "name": "telegramIdHash",
+          "name": "telegram_id_hash",
           "type": {
             "array": [
               "u8",
@@ -873,7 +864,7 @@ export const HeraldIdl = {
           }
         },
         {
-          "name": "nonceTelegram",
+          "name": "nonce_telegram",
           "type": {
             "array": [
               "u8",
@@ -884,7 +875,7 @@ export const HeraldIdl = {
       ]
     },
     {
-      "name": "removeChannel",
+      "name": "remove_channel",
       "docs": [
         "Permanently remove a channel's encrypted data (GDPR per-channel erasure)."
       ],
@@ -904,7 +895,7 @@ export const HeraldIdl = {
           "signer": true
         },
         {
-          "name": "identityAccount",
+          "name": "identity_account",
           "writable": true,
           "pda": {
             "seeds": [
@@ -934,14 +925,14 @@ export const HeraldIdl = {
           "name": "channel",
           "type": {
             "defined": {
-              "name": "channelType"
+              "name": "ChannelType"
             }
           }
         }
       ]
     },
     {
-      "name": "renewSubscription",
+      "name": "renew_subscription",
       "docs": [
         "Renew (or initially activate) a protocol's monthly subscription.",
         "Called by the Herald backend after confirming off-chain payment (Helio)."
@@ -962,7 +953,7 @@ export const HeraldIdl = {
           "signer": true
         },
         {
-          "name": "protocolAccount",
+          "name": "protocol_account",
           "docs": [
             "The protocol whose subscription is being renewed.",
             "Marked `mut` – we update billing timestamps and the active flag."
@@ -973,7 +964,7 @@ export const HeraldIdl = {
       "args": []
     },
     {
-      "name": "resetProtocolSends",
+      "name": "reset_protocol_sends",
       "docs": [
         "Reset a protocol's sends counter at the end of a billing period."
       ],
@@ -993,7 +984,7 @@ export const HeraldIdl = {
           "signer": true
         },
         {
-          "name": "protocolAccount",
+          "name": "protocol_account",
           "docs": [
             "The protocol to reset. The authority constraint ensures this is",
             "a legitimate Herald-owned operation. No additional constraint is",
@@ -1005,7 +996,7 @@ export const HeraldIdl = {
       "args": []
     },
     {
-      "name": "revokeNotificationKey",
+      "name": "revoke_notification_key",
       "docs": [
         "Revoke (zero out) a notification key. Identity data remains intact."
       ],
@@ -1025,7 +1016,7 @@ export const HeraldIdl = {
           "signer": true
         },
         {
-          "name": "identityAccount",
+          "name": "identity_account",
           "writable": true,
           "pda": {
             "seeds": [
@@ -1053,7 +1044,7 @@ export const HeraldIdl = {
       "args": []
     },
     {
-      "name": "rotateNotificationKey",
+      "name": "rotate_notification_key",
       "docs": [
         "Rotate an existing notification key. Increments rotation counter."
       ],
@@ -1074,7 +1065,7 @@ export const HeraldIdl = {
           "signer": true
         },
         {
-          "name": "identityAccount",
+          "name": "identity_account",
           "writable": true,
           "pda": {
             "seeds": [
@@ -1101,7 +1092,7 @@ export const HeraldIdl = {
       ],
       "args": [
         {
-          "name": "newSealedX25519Pubkey",
+          "name": "new_sealed_x25519_pubkey",
           "type": {
             "array": [
               "u8",
@@ -1110,7 +1101,7 @@ export const HeraldIdl = {
           }
         },
         {
-          "name": "newSenderX25519Pubkey",
+          "name": "new_sender_x25519_pubkey",
           "type": {
             "array": [
               "u8",
@@ -1119,7 +1110,7 @@ export const HeraldIdl = {
           }
         },
         {
-          "name": "newNonce",
+          "name": "new_nonce",
           "type": {
             "array": [
               "u8",
@@ -1134,7 +1125,7 @@ export const HeraldIdl = {
       ]
     },
     {
-      "name": "suspendProtocol",
+      "name": "suspend_protocol",
       "docs": [
         "Hard-suspend a protocol (e.g. ToS violation). Only callable by the Herald authority."
       ],
@@ -1154,14 +1145,14 @@ export const HeraldIdl = {
           "signer": true
         },
         {
-          "name": "protocolAccount",
+          "name": "protocol_account",
           "writable": true
         }
       ],
       "args": []
     },
     {
-      "name": "updateChannelSettings",
+      "name": "update_channel_settings",
       "docs": [
         "Toggle individual channels on/off without modifying encrypted data."
       ],
@@ -1181,7 +1172,7 @@ export const HeraldIdl = {
           "signer": true
         },
         {
-          "name": "identityAccount",
+          "name": "identity_account",
           "writable": true,
           "pda": {
             "seeds": [
@@ -1208,19 +1199,19 @@ export const HeraldIdl = {
       ],
       "args": [
         {
-          "name": "channelEmail",
+          "name": "channel_email",
           "type": {
             "option": "bool"
           }
         },
         {
-          "name": "channelTelegram",
+          "name": "channel_telegram",
           "type": {
             "option": "bool"
           }
         },
         {
-          "name": "channelSms",
+          "name": "channel_sms",
           "type": {
             "option": "bool"
           }
@@ -1228,7 +1219,7 @@ export const HeraldIdl = {
       ]
     },
     {
-      "name": "updateIdentity",
+      "name": "update_identity",
       "docs": [
         "Partially update an existing user identity."
       ],
@@ -1252,7 +1243,7 @@ export const HeraldIdl = {
           "signer": true
         },
         {
-          "name": "identityAccount",
+          "name": "identity_account",
           "docs": [
             "Existing identity PDA – only the owner can mutate it."
           ],
@@ -1282,13 +1273,13 @@ export const HeraldIdl = {
       ],
       "args": [
         {
-          "name": "encryptedEmail",
+          "name": "encrypted_email",
           "type": {
             "option": "bytes"
           }
         },
         {
-          "name": "emailHash",
+          "name": "email_hash",
           "type": {
             "option": {
               "array": [
@@ -1310,31 +1301,31 @@ export const HeraldIdl = {
           }
         },
         {
-          "name": "optInAll",
+          "name": "opt_in_all",
           "type": {
             "option": "bool"
           }
         },
         {
-          "name": "optInDefi",
+          "name": "opt_in_defi",
           "type": {
             "option": "bool"
           }
         },
         {
-          "name": "optInGovernance",
+          "name": "opt_in_governance",
           "type": {
             "option": "bool"
           }
         },
         {
-          "name": "optInMarketing",
+          "name": "opt_in_marketing",
           "type": {
             "option": "bool"
           }
         },
         {
-          "name": "digestMode",
+          "name": "digest_mode",
           "type": {
             "option": "bool"
           }
@@ -1342,7 +1333,7 @@ export const HeraldIdl = {
       ]
     },
     {
-      "name": "updateProtocolTier",
+      "name": "update_protocol_tier",
       "docs": [
         "Update a protocol's tier level. Only callable by the Herald authority."
       ],
@@ -1362,19 +1353,19 @@ export const HeraldIdl = {
           "signer": true
         },
         {
-          "name": "protocolAccount",
+          "name": "protocol_account",
           "writable": true
         }
       ],
       "args": [
         {
-          "name": "newTier",
+          "name": "new_tier",
           "type": "u8"
         }
       ]
     },
     {
-      "name": "withdrawTreasury",
+      "name": "withdraw_treasury",
       "docs": [
         "Withdraw accumulated USDC/USDT from vault to Herald treasury.",
         "Only callable by the Herald authority."
@@ -1398,7 +1389,7 @@ export const HeraldIdl = {
           "signer": true
         },
         {
-          "name": "vaultAccount",
+          "name": "vault_account",
           "docs": [
             "Herald treasury vault PDA (used as signer via seeds)."
           ],
@@ -1419,14 +1410,14 @@ export const HeraldIdl = {
           }
         },
         {
-          "name": "vaultTokenAccount",
+          "name": "vault_token_account",
           "docs": [
             "Vault's token account (source of withdrawal)."
           ],
           "writable": true
         },
         {
-          "name": "treasuryTokenAccount",
+          "name": "treasury_token_account",
           "docs": [
             "Treasury's token account (destination).",
             "Constrained to the known HERALD_TREASURY address."
@@ -1434,7 +1425,7 @@ export const HeraldIdl = {
           "writable": true
         },
         {
-          "name": "tokenProgram",
+          "name": "token_program",
           "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
         }
       ],
@@ -1446,7 +1437,7 @@ export const HeraldIdl = {
       ]
     },
     {
-      "name": "writeReceipt",
+      "name": "write_receipt",
       "docs": [
         "Write a ZK-compressed delivery receipt via Light Protocol CPI."
       ],
@@ -1470,7 +1461,7 @@ export const HeraldIdl = {
           "signer": true
         },
         {
-          "name": "protocolAccount",
+          "name": "protocol_account",
           "docs": [
             "The protocol that triggered this notification.",
             "Must be active, not suspended, and within subscription/tier limits.",
@@ -1484,16 +1475,16 @@ export const HeraldIdl = {
           "name": "proof",
           "type": {
             "defined": {
-              "name": "anchorCompressedProof"
+              "name": "AnchorCompressedProof"
             }
           }
         },
         {
-          "name": "outputTreeIndex",
+          "name": "output_tree_index",
           "type": "u8"
         },
         {
-          "name": "recipientHash",
+          "name": "recipient_hash",
           "type": {
             "array": [
               "u8",
@@ -1502,7 +1493,7 @@ export const HeraldIdl = {
           }
         },
         {
-          "name": "notificationId",
+          "name": "notification_id",
           "type": {
             "array": [
               "u8",
@@ -1519,7 +1510,7 @@ export const HeraldIdl = {
   ],
   "accounts": [
     {
-      "name": "identityAccount",
+      "name": "IdentityAccount",
       "discriminator": [
         194,
         90,
@@ -1532,7 +1523,7 @@ export const HeraldIdl = {
       ]
     },
     {
-      "name": "protocolRegistryAccount",
+      "name": "ProtocolRegistryAccount",
       "discriminator": [
         228,
         240,
@@ -1545,7 +1536,7 @@ export const HeraldIdl = {
       ]
     },
     {
-      "name": "subscriptionVaultAccount",
+      "name": "SubscriptionVaultAccount",
       "discriminator": [
         70,
         34,
@@ -1560,7 +1551,7 @@ export const HeraldIdl = {
   ],
   "events": [
     {
-      "name": "channelRemoved",
+      "name": "ChannelRemoved",
       "discriminator": [
         226,
         140,
@@ -1573,7 +1564,7 @@ export const HeraldIdl = {
       ]
     },
     {
-      "name": "channelSettingsUpdated",
+      "name": "ChannelSettingsUpdated",
       "discriminator": [
         185,
         148,
@@ -1586,7 +1577,7 @@ export const HeraldIdl = {
       ]
     },
     {
-      "name": "identityDeleted",
+      "name": "IdentityDeleted",
       "discriminator": [
         44,
         0,
@@ -1599,7 +1590,7 @@ export const HeraldIdl = {
       ]
     },
     {
-      "name": "identityRegistered",
+      "name": "IdentityRegistered",
       "discriminator": [
         5,
         243,
@@ -1612,7 +1603,7 @@ export const HeraldIdl = {
       ]
     },
     {
-      "name": "identityUpdated",
+      "name": "IdentityUpdated",
       "discriminator": [
         93,
         70,
@@ -1625,7 +1616,7 @@ export const HeraldIdl = {
       ]
     },
     {
-      "name": "notificationDelivered",
+      "name": "NotificationDelivered",
       "discriminator": [
         178,
         168,
@@ -1638,7 +1629,7 @@ export const HeraldIdl = {
       ]
     },
     {
-      "name": "notificationKeyRegistered",
+      "name": "NotificationKeyRegistered",
       "discriminator": [
         142,
         89,
@@ -1651,7 +1642,7 @@ export const HeraldIdl = {
       ]
     },
     {
-      "name": "notificationKeyRevoked",
+      "name": "NotificationKeyRevoked",
       "discriminator": [
         7,
         155,
@@ -1664,7 +1655,7 @@ export const HeraldIdl = {
       ]
     },
     {
-      "name": "notificationKeyRotated",
+      "name": "NotificationKeyRotated",
       "discriminator": [
         8,
         99,
@@ -1677,7 +1668,7 @@ export const HeraldIdl = {
       ]
     },
     {
-      "name": "paymentReceived",
+      "name": "PaymentReceived",
       "discriminator": [
         238,
         145,
@@ -1690,7 +1681,7 @@ export const HeraldIdl = {
       ]
     },
     {
-      "name": "periodReset",
+      "name": "PeriodReset",
       "discriminator": [
         198,
         246,
@@ -1703,7 +1694,7 @@ export const HeraldIdl = {
       ]
     },
     {
-      "name": "preferencesUpdated",
+      "name": "PreferencesUpdated",
       "discriminator": [
         157,
         193,
@@ -1716,7 +1707,7 @@ export const HeraldIdl = {
       ]
     },
     {
-      "name": "protocolDeactivated",
+      "name": "ProtocolDeactivated",
       "discriminator": [
         155,
         195,
@@ -1729,7 +1720,7 @@ export const HeraldIdl = {
       ]
     },
     {
-      "name": "protocolReactivated",
+      "name": "ProtocolReactivated",
       "discriminator": [
         28,
         237,
@@ -1742,7 +1733,7 @@ export const HeraldIdl = {
       ]
     },
     {
-      "name": "protocolRegistered",
+      "name": "ProtocolRegistered",
       "discriminator": [
         68,
         113,
@@ -1755,7 +1746,7 @@ export const HeraldIdl = {
       ]
     },
     {
-      "name": "protocolSendRecorded",
+      "name": "ProtocolSendRecorded",
       "discriminator": [
         234,
         94,
@@ -1768,7 +1759,7 @@ export const HeraldIdl = {
       ]
     },
     {
-      "name": "protocolSuspended",
+      "name": "ProtocolSuspended",
       "discriminator": [
         196,
         103,
@@ -1781,7 +1772,7 @@ export const HeraldIdl = {
       ]
     },
     {
-      "name": "protocolTierUpdated",
+      "name": "ProtocolTierUpdated",
       "discriminator": [
         240,
         116,
@@ -1794,7 +1785,7 @@ export const HeraldIdl = {
       ]
     },
     {
-      "name": "smsRegistered",
+      "name": "SmsRegistered",
       "discriminator": [
         145,
         36,
@@ -1807,7 +1798,7 @@ export const HeraldIdl = {
       ]
     },
     {
-      "name": "subscriptionRenewed",
+      "name": "SubscriptionRenewed",
       "discriminator": [
         107,
         68,
@@ -1820,7 +1811,7 @@ export const HeraldIdl = {
       ]
     },
     {
-      "name": "telegramRegistered",
+      "name": "TelegramRegistered",
       "discriminator": [
         135,
         16,
@@ -1836,218 +1827,218 @@ export const HeraldIdl = {
   "errors": [
     {
       "code": 6000,
-      "name": "emailTooLong",
+      "name": "EmailTooLong",
       "msg": "Encrypted email exceeds maximum length of 200 bytes"
     },
     {
       "code": 6001,
-      "name": "emailEmpty",
+      "name": "EmailEmpty",
       "msg": "Encrypted email must not be empty"
     },
     {
       "code": 6002,
-      "name": "invalidEmailHash",
+      "name": "InvalidEmailHash",
       "msg": "Email hash must be exactly 32 bytes (SHA-256)"
     },
     {
       "code": 6003,
-      "name": "invalidNonce",
+      "name": "InvalidNonce",
       "msg": "Nonce must be exactly 24 bytes"
     },
     {
       "code": 6004,
-      "name": "emptyUpdate",
+      "name": "EmptyUpdate",
       "msg": "Update must modify at least one field"
     },
     {
       "code": 6005,
-      "name": "unauthorized",
+      "name": "Unauthorized",
       "msg": "Unauthorized: signer does not match required authority"
     },
     {
       "code": 6006,
-      "name": "ownerMismatch",
+      "name": "OwnerMismatch",
       "msg": "Unauthorized: signer does not own this identity account"
     },
     {
       "code": 6007,
-      "name": "invalidTier",
+      "name": "InvalidTier",
       "msg": "Invalid tier: must be 0 (dev), 1 (growth), 2 (scale), or 3 (enterprise)"
     },
     {
       "code": 6008,
-      "name": "protocolInactive",
+      "name": "ProtocolInactive",
       "msg": "Protocol is not active"
     },
     {
       "code": 6009,
-      "name": "protocolAlreadyDeactivated",
+      "name": "ProtocolAlreadyDeactivated",
       "msg": "Protocol is already deactivated"
     },
     {
       "code": 6010,
-      "name": "protocolSuspended",
+      "name": "ProtocolSuspended",
       "msg": "Protocol has been suspended by Herald and cannot send notifications"
     },
     {
       "code": 6011,
-      "name": "protocolAlreadyActive",
+      "name": "ProtocolAlreadyActive",
       "msg": "Protocol is already active; no need to reactivate"
     },
     {
       "code": 6012,
-      "name": "subscriptionExpired",
+      "name": "SubscriptionExpired",
       "msg": "Protocol subscription has expired; renew to continue sending"
     },
     {
       "code": 6013,
-      "name": "subscriptionNotActive",
+      "name": "SubscriptionNotActive",
       "msg": "Protocol has not yet subscribed; subscription_expires_at is zero"
     },
     {
       "code": 6014,
-      "name": "sendsLimitExceeded",
+      "name": "SendsLimitExceeded",
       "msg": "Protocol has reached the maximum sends for this billing period"
     },
     {
       "code": 6015,
-      "name": "sendsOverflow",
+      "name": "SendsOverflow",
       "msg": "Protocol sends counter would overflow"
     },
     {
       "code": 6016,
-      "name": "invalidSubscriptionExpiry",
+      "name": "InvalidSubscriptionExpiry",
       "msg": "New subscription expiry must be in the future"
     },
     {
       "code": 6017,
-      "name": "devTierNoPayment",
+      "name": "DevTierNoPayment",
       "msg": "Developer tier is free; payment not required"
     },
     {
       "code": 6018,
-      "name": "unsupportedPaymentToken",
+      "name": "UnsupportedPaymentToken",
       "msg": "Unsupported payment token; must be USDC or USDT"
     },
     {
       "code": 6019,
-      "name": "invalidCategory",
+      "name": "InvalidCategory",
       "msg": "Invalid category: must be 0 (DeFi), 1 (Governance), 2 (Marketing), or 3 (Other)"
     },
     {
       "code": 6020,
-      "name": "invalidRecipientHash",
+      "name": "InvalidRecipientHash",
       "msg": "Recipient hash must be exactly 32 bytes (SHA-256)"
     },
     {
       "code": 6021,
-      "name": "invalidNotificationId",
+      "name": "InvalidNotificationId",
       "msg": "Notification ID must be exactly 16 bytes (UUID v4)"
     },
     {
       "code": 6022,
-      "name": "lightCpiAccountsError",
+      "name": "LightCpiAccountsError",
       "msg": "Failed to initialise Light Protocol CPI accounts"
     },
     {
       "code": 6023,
-      "name": "lightAccountError",
+      "name": "LightAccountError",
       "msg": "Failed to attach compressed account to Light CPI"
     },
     {
       "code": 6024,
-      "name": "lightCpiInvocationError",
+      "name": "LightCpiInvocationError",
       "msg": "Light Protocol CPI invocation failed"
     },
     {
       "code": 6025,
-      "name": "overflow",
+      "name": "Overflow",
       "msg": "Arithmetic overflow"
     },
     {
       "code": 6026,
-      "name": "clockUnavailable",
+      "name": "ClockUnavailable",
       "msg": "Clock sysvar unavailable"
     },
     {
       "code": 6027,
-      "name": "telegramIdEmpty",
+      "name": "TelegramIdEmpty",
       "msg": "Encrypted Telegram ID must not be empty"
     },
     {
       "code": 6028,
-      "name": "telegramIdTooLong",
+      "name": "TelegramIdTooLong",
       "msg": "Encrypted Telegram ID exceeds maximum length of 80 bytes"
     },
     {
       "code": 6029,
-      "name": "telegramNotRegistered",
+      "name": "TelegramNotRegistered",
       "msg": "Telegram channel not registered; add Telegram before enabling it"
     },
     {
       "code": 6030,
-      "name": "phoneEmpty",
+      "name": "PhoneEmpty",
       "msg": "Encrypted phone number must not be empty"
     },
     {
       "code": 6031,
-      "name": "phoneTooLong",
+      "name": "PhoneTooLong",
       "msg": "Encrypted phone number exceeds maximum length of 65 bytes"
     },
     {
       "code": 6032,
-      "name": "smsNotRegistered",
+      "name": "SmsNotRegistered",
       "msg": "SMS channel not registered; add phone before enabling it"
     },
     {
       "code": 6033,
-      "name": "noActiveChannels",
+      "name": "NoActiveChannels",
       "msg": "At least one delivery channel must remain active"
     },
     {
       "code": 6034,
-      "name": "invalidChannelType",
+      "name": "InvalidChannelType",
       "msg": "Invalid channel type: must be 0 (Telegram) or 1 (SMS)"
     },
     {
       "code": 6035,
-      "name": "zeroSealedPubkey",
+      "name": "ZeroSealedPubkey",
       "msg": "Sealed pubkey cannot be all zeros — invalid key material"
     },
     {
       "code": 6036,
-      "name": "zeroNotificationNonce",
+      "name": "ZeroNotificationNonce",
       "msg": "Notification nonce cannot be all zeros — replay attack risk"
     },
     {
       "code": 6037,
-      "name": "unsupportedNotificationKeyVersion",
+      "name": "UnsupportedNotificationKeyVersion",
       "msg": "Unsupported notification key version"
     },
     {
       "code": 6038,
-      "name": "maxNotificationKeyRotationsExceeded",
+      "name": "MaxNotificationKeyRotationsExceeded",
       "msg": "Max notification key rotations reached — revoke and re-register"
     },
     {
       "code": 6039,
-      "name": "notificationNonceReuse",
+      "name": "NotificationNonceReuse",
       "msg": "Notification nonce must differ from current nonce on rotation"
     },
     {
       "code": 6040,
-      "name": "notificationKeyNotRegistered",
+      "name": "NotificationKeyNotRegistered",
       "msg": "No notification key registered — cannot rotate or revoke"
     },
     {
       "code": 6041,
-      "name": "identityNotRegistered",
+      "name": "IdentityNotRegistered",
       "msg": "Identity account must be registered before adding a notification key"
     }
   ],
   "types": [
     {
-      "name": "anchorCompressedProof",
+      "name": "AnchorCompressedProof",
       "docs": [
         "Anchor-compatible wrapper for `CompressedProof`.",
         "",
@@ -2090,7 +2081,7 @@ export const HeraldIdl = {
       }
     },
     {
-      "name": "channelRemoved",
+      "name": "ChannelRemoved",
       "docs": [
         "Emitted when a channel's encrypted data is permanently removed (GDPR erasure)."
       ],
@@ -2116,7 +2107,7 @@ export const HeraldIdl = {
       }
     },
     {
-      "name": "channelSettingsUpdated",
+      "name": "ChannelSettingsUpdated",
       "docs": [
         "Emitted when channel enable/disable flags are toggled."
       ],
@@ -2128,15 +2119,15 @@ export const HeraldIdl = {
             "type": "pubkey"
           },
           {
-            "name": "channelEmail",
+            "name": "channel_email",
             "type": "bool"
           },
           {
-            "name": "channelTelegram",
+            "name": "channel_telegram",
             "type": "bool"
           },
           {
-            "name": "channelSms",
+            "name": "channel_sms",
             "type": "bool"
           },
           {
@@ -2147,7 +2138,7 @@ export const HeraldIdl = {
       }
     },
     {
-      "name": "channelType",
+      "name": "ChannelType",
       "docs": [
         "Channel type enum for per-channel removal (GDPR erasure)."
       ],
@@ -2155,16 +2146,16 @@ export const HeraldIdl = {
         "kind": "enum",
         "variants": [
           {
-            "name": "telegram"
+            "name": "Telegram"
           },
           {
-            "name": "sms"
+            "name": "Sms"
           }
         ]
       }
     },
     {
-      "name": "identityAccount",
+      "name": "IdentityAccount",
       "docs": [
         "User identity account storing encrypted email, channel data, and notification preferences.",
         "",
@@ -2191,14 +2182,14 @@ export const HeraldIdl = {
             "type": "pubkey"
           },
           {
-            "name": "encryptedEmail",
+            "name": "encrypted_email",
             "docs": [
               "NaCl-encrypted email address (max 200 bytes)."
             ],
             "type": "bytes"
           },
           {
-            "name": "emailHash",
+            "name": "email_hash",
             "docs": [
               "SHA-256 hash of the plaintext email (for change detection without decryption)."
             ],
@@ -2222,42 +2213,42 @@ export const HeraldIdl = {
             }
           },
           {
-            "name": "registeredAt",
+            "name": "registered_at",
             "docs": [
               "Unix timestamp of initial registration."
             ],
             "type": "i64"
           },
           {
-            "name": "optInAll",
+            "name": "opt_in_all",
             "docs": [
               "Global opt-in for all notification categories."
             ],
             "type": "bool"
           },
           {
-            "name": "optInDefi",
+            "name": "opt_in_defi",
             "docs": [
               "Opt-in for DeFi notifications."
             ],
             "type": "bool"
           },
           {
-            "name": "optInGovernance",
+            "name": "opt_in_governance",
             "docs": [
               "Opt-in for governance notifications."
             ],
             "type": "bool"
           },
           {
-            "name": "optInMarketing",
+            "name": "opt_in_marketing",
             "docs": [
               "Opt-in for marketing notifications."
             ],
             "type": "bool"
           },
           {
-            "name": "digestMode",
+            "name": "digest_mode",
             "docs": [
               "When true, deliver notifications in a daily digest instead of real-time."
             ],
@@ -2271,28 +2262,28 @@ export const HeraldIdl = {
             "type": "u8"
           },
           {
-            "name": "channelEmail",
+            "name": "channel_email",
             "docs": [
               "Email channel enabled (default true — all existing accounts)."
             ],
             "type": "bool"
           },
           {
-            "name": "channelTelegram",
+            "name": "channel_telegram",
             "docs": [
               "Telegram channel enabled."
             ],
             "type": "bool"
           },
           {
-            "name": "channelSms",
+            "name": "channel_sms",
             "docs": [
               "SMS channel enabled."
             ],
             "type": "bool"
           },
           {
-            "name": "encryptedTelegramId",
+            "name": "encrypted_telegram_id",
             "docs": [
               "NaCl box encrypted Telegram chat_id (int64 as string).",
               "Format: [ephemeral_pubkey(32) || box(chat_id_str, nonce_tg)].",
@@ -2302,7 +2293,7 @@ export const HeraldIdl = {
             "type": "bytes"
           },
           {
-            "name": "telegramIdHash",
+            "name": "telegram_id_hash",
             "docs": [
               "SHA-256 of the Telegram chat_id string.",
               "Allows Herald to detect chat_id changes without decrypting."
@@ -2315,7 +2306,7 @@ export const HeraldIdl = {
             }
           },
           {
-            "name": "nonceTelegram",
+            "name": "nonce_telegram",
             "docs": [
               "NaCl nonce for Telegram encryption (separate from email nonce)."
             ],
@@ -2327,7 +2318,7 @@ export const HeraldIdl = {
             }
           },
           {
-            "name": "encryptedPhone",
+            "name": "encrypted_phone",
             "docs": [
               "NaCl box encrypted E.164 phone number (e.g. \"+14155552671\").",
               "Format: [ephemeral_pubkey(32) || box(phone_e164, nonce_sms)].",
@@ -2337,7 +2328,7 @@ export const HeraldIdl = {
             "type": "bytes"
           },
           {
-            "name": "phoneHash",
+            "name": "phone_hash",
             "docs": [
               "SHA-256 of the E.164 phone number string."
             ],
@@ -2349,7 +2340,7 @@ export const HeraldIdl = {
             }
           },
           {
-            "name": "nonceSms",
+            "name": "nonce_sms",
             "docs": [
               "NaCl nonce for phone encryption."
             ],
@@ -2361,7 +2352,7 @@ export const HeraldIdl = {
             }
           },
           {
-            "name": "sealedX25519Pubkey",
+            "name": "sealed_x25519_pubkey",
             "docs": [
               "NaCl box ciphertext of user's X25519 pubkey.",
               "Sealed with Herald Enclave's wrapping pubkey. Only the enclave can unwrap.",
@@ -2376,7 +2367,7 @@ export const HeraldIdl = {
             }
           },
           {
-            "name": "senderX25519Pubkey",
+            "name": "sender_x25519_pubkey",
             "docs": [
               "User's X25519 public key in plaintext.",
               "Needed by the enclave for NaCl box.open (as the \"sender\" pubkey).",
@@ -2390,7 +2381,7 @@ export const HeraldIdl = {
             }
           },
           {
-            "name": "notificationNonce",
+            "name": "notification_nonce",
             "docs": [
               "NaCl box nonce used during sealing. Stored so the enclave can unwrap."
             ],
@@ -2402,7 +2393,7 @@ export const HeraldIdl = {
             }
           },
           {
-            "name": "notificationKeyVersion",
+            "name": "notification_key_version",
             "docs": [
               "Schema version for the notification key format.",
               "Allows the enclave to handle format migrations gracefully."
@@ -2410,14 +2401,14 @@ export const HeraldIdl = {
             "type": "u8"
           },
           {
-            "name": "notificationKeyUpdatedAt",
+            "name": "notification_key_updated_at",
             "docs": [
               "Unix timestamp of last notification key registration or rotation."
             ],
             "type": "i64"
           },
           {
-            "name": "notificationKeyRotationCount",
+            "name": "notification_key_rotation_count",
             "docs": [
               "Number of times this notification key has been rotated.",
               "Capped at MAX_NOTIFICATION_KEY_ROTATIONS to prevent abuse."
@@ -2428,7 +2419,7 @@ export const HeraldIdl = {
       }
     },
     {
-      "name": "identityDeleted",
+      "name": "IdentityDeleted",
       "docs": [
         "Emitted when a user deletes their identity account."
       ],
@@ -2447,7 +2438,7 @@ export const HeraldIdl = {
       }
     },
     {
-      "name": "identityRegistered",
+      "name": "IdentityRegistered",
       "docs": [
         "Emitted when a new user identity is created."
       ],
@@ -2459,7 +2450,7 @@ export const HeraldIdl = {
             "type": "pubkey"
           },
           {
-            "name": "emailHash",
+            "name": "email_hash",
             "type": {
               "array": [
                 "u8",
@@ -2468,23 +2459,23 @@ export const HeraldIdl = {
             }
           },
           {
-            "name": "optInAll",
+            "name": "opt_in_all",
             "type": "bool"
           },
           {
-            "name": "optInDefi",
+            "name": "opt_in_defi",
             "type": "bool"
           },
           {
-            "name": "optInGovernance",
+            "name": "opt_in_governance",
             "type": "bool"
           },
           {
-            "name": "optInMarketing",
+            "name": "opt_in_marketing",
             "type": "bool"
           },
           {
-            "name": "digestMode",
+            "name": "digest_mode",
             "type": "bool"
           },
           {
@@ -2495,7 +2486,7 @@ export const HeraldIdl = {
       }
     },
     {
-      "name": "identityUpdated",
+      "name": "IdentityUpdated",
       "docs": [
         "Emitted when a user updates their identity."
       ],
@@ -2507,11 +2498,11 @@ export const HeraldIdl = {
             "type": "pubkey"
           },
           {
-            "name": "emailChanged",
+            "name": "email_changed",
             "type": "bool"
           },
           {
-            "name": "preferencesChanged",
+            "name": "preferences_changed",
             "type": "bool"
           },
           {
@@ -2522,7 +2513,7 @@ export const HeraldIdl = {
       }
     },
     {
-      "name": "notificationDelivered",
+      "name": "NotificationDelivered",
       "docs": [
         "Emitted when a ZK-compressed delivery receipt is written."
       ],
@@ -2534,7 +2525,7 @@ export const HeraldIdl = {
             "type": "pubkey"
           },
           {
-            "name": "recipientHash",
+            "name": "recipient_hash",
             "type": {
               "array": [
                 "u8",
@@ -2543,7 +2534,7 @@ export const HeraldIdl = {
             }
           },
           {
-            "name": "notificationId",
+            "name": "notification_id",
             "type": {
               "array": [
                 "u8",
@@ -2556,7 +2547,7 @@ export const HeraldIdl = {
             "type": "u8"
           },
           {
-            "name": "sendsThisPeriod",
+            "name": "sends_this_period",
             "type": "u64"
           },
           {
@@ -2567,7 +2558,7 @@ export const HeraldIdl = {
       }
     },
     {
-      "name": "notificationKeyRegistered",
+      "name": "NotificationKeyRegistered",
       "docs": [
         "Emitted when a user registers their sealed X25519 notification key."
       ],
@@ -2583,14 +2574,14 @@ export const HeraldIdl = {
             "type": "u8"
           },
           {
-            "name": "registeredAt",
+            "name": "registered_at",
             "type": "i64"
           }
         ]
       }
     },
     {
-      "name": "notificationKeyRevoked",
+      "name": "NotificationKeyRevoked",
       "docs": [
         "Emitted when a user revokes (zeroes out) their notification key."
       ],
@@ -2602,14 +2593,14 @@ export const HeraldIdl = {
             "type": "pubkey"
           },
           {
-            "name": "revokedAt",
+            "name": "revoked_at",
             "type": "i64"
           }
         ]
       }
     },
     {
-      "name": "notificationKeyRotated",
+      "name": "NotificationKeyRotated",
       "docs": [
         "Emitted when a user rotates their sealed notification key."
       ],
@@ -2625,18 +2616,18 @@ export const HeraldIdl = {
             "type": "u8"
           },
           {
-            "name": "rotationCount",
+            "name": "rotation_count",
             "type": "u32"
           },
           {
-            "name": "rotatedAt",
+            "name": "rotated_at",
             "type": "i64"
           }
         ]
       }
     },
     {
-      "name": "paymentReceived",
+      "name": "PaymentReceived",
       "docs": [
         "Emitted when a protocol pays on-chain (Phase 2 only)."
       ],
@@ -2648,11 +2639,11 @@ export const HeraldIdl = {
             "type": "pubkey"
           },
           {
-            "name": "amountUsdc",
+            "name": "amount_usdc",
             "type": "u64"
           },
           {
-            "name": "tokenMint",
+            "name": "token_mint",
             "type": "pubkey"
           },
           {
@@ -2664,7 +2655,7 @@ export const HeraldIdl = {
             "type": "u8"
           },
           {
-            "name": "newExpiry",
+            "name": "new_expiry",
             "type": "i64"
           },
           {
@@ -2675,7 +2666,7 @@ export const HeraldIdl = {
       }
     },
     {
-      "name": "periodReset",
+      "name": "PeriodReset",
       "docs": [
         "Emitted at the end of a billing period when the sends counter is reset."
       ],
@@ -2687,7 +2678,7 @@ export const HeraldIdl = {
             "type": "pubkey"
           },
           {
-            "name": "sendsLastPeriod",
+            "name": "sends_last_period",
             "type": "u64"
           },
           {
@@ -2702,7 +2693,7 @@ export const HeraldIdl = {
       }
     },
     {
-      "name": "preferencesUpdated",
+      "name": "PreferencesUpdated",
       "docs": [
         "Emitted when notification preferences specifically change."
       ],
@@ -2714,23 +2705,23 @@ export const HeraldIdl = {
             "type": "pubkey"
           },
           {
-            "name": "optInAll",
+            "name": "opt_in_all",
             "type": "bool"
           },
           {
-            "name": "optInDefi",
+            "name": "opt_in_defi",
             "type": "bool"
           },
           {
-            "name": "optInGovernance",
+            "name": "opt_in_governance",
             "type": "bool"
           },
           {
-            "name": "optInMarketing",
+            "name": "opt_in_marketing",
             "type": "bool"
           },
           {
-            "name": "digestMode",
+            "name": "digest_mode",
             "type": "bool"
           },
           {
@@ -2741,7 +2732,7 @@ export const HeraldIdl = {
       }
     },
     {
-      "name": "protocolDeactivated",
+      "name": "ProtocolDeactivated",
       "docs": [
         "Emitted when a protocol is deactivated."
       ],
@@ -2760,7 +2751,7 @@ export const HeraldIdl = {
       }
     },
     {
-      "name": "protocolReactivated",
+      "name": "ProtocolReactivated",
       "docs": [
         "Emitted when a previously deactivated protocol is reactivated."
       ],
@@ -2779,7 +2770,7 @@ export const HeraldIdl = {
       }
     },
     {
-      "name": "protocolRegistered",
+      "name": "ProtocolRegistered",
       "docs": [
         "Emitted when a new DeFi protocol is registered."
       ],
@@ -2791,7 +2782,7 @@ export const HeraldIdl = {
             "type": "pubkey"
           },
           {
-            "name": "nameHash",
+            "name": "name_hash",
             "type": {
               "array": [
                 "u8",
@@ -2811,7 +2802,7 @@ export const HeraldIdl = {
       }
     },
     {
-      "name": "protocolRegistryAccount",
+      "name": "ProtocolRegistryAccount",
       "docs": [
         "On-chain registration and billing record for a DeFi protocol.",
         "",
@@ -2828,7 +2819,7 @@ export const HeraldIdl = {
             "type": "pubkey"
           },
           {
-            "name": "nameHash",
+            "name": "name_hash",
             "docs": [
               "SHA-256 hash of the protocol name (actual name stored off-chain)."
             ],
@@ -2847,7 +2838,7 @@ export const HeraldIdl = {
             "type": "u8"
           },
           {
-            "name": "subscriptionExpiresAt",
+            "name": "subscription_expires_at",
             "docs": [
               "Unix timestamp when the current subscription period expires.",
               "0 means not yet active (registered but not yet subscribed)."
@@ -2855,28 +2846,28 @@ export const HeraldIdl = {
             "type": "i64"
           },
           {
-            "name": "lastRenewedAt",
+            "name": "last_renewed_at",
             "docs": [
               "Unix timestamp of the last subscription renewal."
             ],
             "type": "i64"
           },
           {
-            "name": "periodsPaid",
+            "name": "periods_paid",
             "docs": [
               "Total number of complete billing periods successfully paid."
             ],
             "type": "u32"
           },
           {
-            "name": "sendsThisPeriod",
+            "name": "sends_this_period",
             "docs": [
               "Number of sends consumed in the current billing period."
             ],
             "type": "u64"
           },
           {
-            "name": "isActive",
+            "name": "is_active",
             "docs": [
               "Whether this protocol is allowed to send notifications.",
               "Set to false on deactivation or subscription lapse."
@@ -2884,28 +2875,28 @@ export const HeraldIdl = {
             "type": "bool"
           },
           {
-            "name": "isSuspended",
+            "name": "is_suspended",
             "docs": [
               "Whether the protocol has been explicitly suspended by Herald (not just lapsed)."
             ],
             "type": "bool"
           },
           {
-            "name": "lifetimeUsdcPaid",
+            "name": "lifetime_usdc_paid",
             "docs": [
               "Accumulated USDC paid lifetime (6-decimal base units, for analytics)."
             ],
             "type": "u64"
           },
           {
-            "name": "lastPaymentMint",
+            "name": "last_payment_mint",
             "docs": [
               "Last payment token mint (USDC or USDT pubkey). Default if never paid."
             ],
             "type": "pubkey"
           },
           {
-            "name": "registeredAt",
+            "name": "registered_at",
             "docs": [
               "Unix timestamp of initial registration."
             ],
@@ -2922,7 +2913,7 @@ export const HeraldIdl = {
       }
     },
     {
-      "name": "protocolSendRecorded",
+      "name": "ProtocolSendRecorded",
       "docs": [
         "Emitted on every send so off-chain indexers can track usage."
       ],
@@ -2934,11 +2925,11 @@ export const HeraldIdl = {
             "type": "pubkey"
           },
           {
-            "name": "sendsThisPeriod",
+            "name": "sends_this_period",
             "type": "u64"
           },
           {
-            "name": "sendsLimit",
+            "name": "sends_limit",
             "type": "u64"
           },
           {
@@ -2949,7 +2940,7 @@ export const HeraldIdl = {
       }
     },
     {
-      "name": "protocolSuspended",
+      "name": "ProtocolSuspended",
       "docs": [
         "Emitted when a protocol is suspended by Herald."
       ],
@@ -2968,7 +2959,7 @@ export const HeraldIdl = {
       }
     },
     {
-      "name": "protocolTierUpdated",
+      "name": "ProtocolTierUpdated",
       "docs": [
         "Emitted when a protocol's tier is changed."
       ],
@@ -2980,11 +2971,11 @@ export const HeraldIdl = {
             "type": "pubkey"
           },
           {
-            "name": "oldTier",
+            "name": "old_tier",
             "type": "u8"
           },
           {
-            "name": "newTier",
+            "name": "new_tier",
             "type": "u8"
           },
           {
@@ -2995,7 +2986,7 @@ export const HeraldIdl = {
       }
     },
     {
-      "name": "smsRegistered",
+      "name": "SmsRegistered",
       "docs": [
         "Emitted when an SMS channel is registered or updated for an identity."
       ],
@@ -3007,7 +2998,7 @@ export const HeraldIdl = {
             "type": "pubkey"
           },
           {
-            "name": "phoneHash",
+            "name": "phone_hash",
             "type": {
               "array": [
                 "u8",
@@ -3023,7 +3014,7 @@ export const HeraldIdl = {
       }
     },
     {
-      "name": "subscriptionRenewed",
+      "name": "SubscriptionRenewed",
       "docs": [
         "Emitted by BOTH `renew_subscription` (Helio path) AND `pay_subscription` (USDC path)."
       ],
@@ -3039,22 +3030,22 @@ export const HeraldIdl = {
             "type": "u8"
           },
           {
-            "name": "newExpiry",
+            "name": "new_expiry",
             "type": "i64"
           },
           {
-            "name": "periodsPaid",
+            "name": "periods_paid",
             "type": "u32"
           },
           {
-            "name": "usdcPaid",
+            "name": "usdc_paid",
             "docs": [
               "Zero when called via authority (Helio); actual USDC amount for on-chain payments."
             ],
             "type": "u64"
           },
           {
-            "name": "paymentSource",
+            "name": "payment_source",
             "docs": [
               "\"helio_webhook\" | \"on_chain_usdc\" | \"on_chain_usdt\" (padded to 20 bytes)."
             ],
@@ -3073,7 +3064,7 @@ export const HeraldIdl = {
       }
     },
     {
-      "name": "subscriptionVaultAccount",
+      "name": "SubscriptionVaultAccount",
       "docs": [
         "Herald's USDC/USDT treasury vault.",
         "",
@@ -3092,28 +3083,28 @@ export const HeraldIdl = {
             "type": "pubkey"
           },
           {
-            "name": "totalUsdcCollected",
+            "name": "total_usdc_collected",
             "docs": [
               "Total USDC accumulated (6-decimal base units)."
             ],
             "type": "u64"
           },
           {
-            "name": "totalUsdtCollected",
+            "name": "total_usdt_collected",
             "docs": [
               "Total USDT accumulated (6-decimal base units)."
             ],
             "type": "u64"
           },
           {
-            "name": "lastWithdrawalAt",
+            "name": "last_withdrawal_at",
             "docs": [
               "Last withdrawal timestamp."
             ],
             "type": "i64"
           },
           {
-            "name": "withdrawalCount",
+            "name": "withdrawal_count",
             "docs": [
               "Total withdrawal count (for audit trail)."
             ],
@@ -3130,7 +3121,7 @@ export const HeraldIdl = {
       }
     },
     {
-      "name": "telegramRegistered",
+      "name": "TelegramRegistered",
       "docs": [
         "Emitted when a Telegram channel is registered or updated for an identity."
       ],
@@ -3142,7 +3133,7 @@ export const HeraldIdl = {
             "type": "pubkey"
           },
           {
-            "name": "telegramIdHash",
+            "name": "telegram_id_hash",
             "type": {
               "array": [
                 "u8",
@@ -3158,4 +3149,4 @@ export const HeraldIdl = {
       }
     }
   ]
-} as const;
+};
