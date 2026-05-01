@@ -5,6 +5,13 @@ All notable changes to the `@herald-protocol/sdk` will be documented in this fil
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.2](https://github.com/heraldhq-protocol/herald-sdk-ts/compare/v1.3.1...v1.3.2) (2026-05-01)
+
+
+### Bug Fixes
+
+* **ci:** add release-please config references and commitlint ([ad375b9](https://github.com/heraldhq-protocol/herald-sdk-ts/commit/ad375b955c249e7ce9e2b2bd22746c63cf8f7585))
+
 ## [1.3.1](https://github.com/heraldhq-protocol/herald-sdk-ts/compare/v1.3.0...v1.3.1) (2026-05-01)
 
 
