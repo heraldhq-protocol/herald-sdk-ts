@@ -19,10 +19,22 @@ jobs:
     outputs:
       release_created: ${{ steps.release.outputs.release_created }}
     steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install commitlint
+        run: npm install -g @commitlint/cli @commitlint/config-conventional
+
+      - name: Validate commit messages
+        run: npx commitlint --from ${{ github.event.before }} --to ${{ github.event.after }} --verbose || true
+
       - uses: googleapis/release-please-action@v4
         id: release
         with:
           release-type: node
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
 
   publish-npm:
     needs: release-please
