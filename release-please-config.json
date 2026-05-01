@@ -2,8 +2,7 @@
   "packages": {
     ".": {
       "release-type": "node",
-      "package-name": "@herald-protocol/sdk",
-      "component": "sdk"
+      "package-name": "@herald-protocol/sdk"
     }
   }
 }
