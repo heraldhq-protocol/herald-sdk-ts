@@ -5,6 +5,14 @@ All notable changes to the `@herald-protocol/sdk` will be documented in this fil
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.1](https://github.com/heraldhq-protocol/herald-sdk-ts/compare/v1.3.0...v1.3.1) (2026-05-01)
+
+
+### Bug Fixes
+
+* update HERALD_AUTHORITY to new program authority key ([96c94bd](https://github.com/heraldhq-protocol/herald-sdk-ts/commit/96c94bd15e9cb07588101c222a24e3863ec1b3a7))
+* update IDL from anchor build ([e0aa08f](https://github.com/heraldhq-protocol/herald-sdk-ts/commit/e0aa08fcef3e6391c47073cd6275946086aa44a3))
+
 ## [1.3.0](https://github.com/heraldhq-protocol/herald-sdk-ts/compare/v1.2.2...v1.3.0) (2026-04-25)
 
 
