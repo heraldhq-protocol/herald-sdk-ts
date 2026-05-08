@@ -96,6 +96,9 @@ export {
   encryptPhone,
   decryptTelegramId,
   decryptPhone,
+  encryptEmailForGateway,
+  encryptTelegramIdForGateway,
+  encryptPhoneForGateway,
 } from "./channels/index.js";
 
 export type {

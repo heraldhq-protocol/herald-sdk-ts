@@ -33,6 +33,9 @@ export {
     encryptPhone,
     decryptTelegramId,
     decryptPhone,
+    encryptEmailForGateway,
+    encryptTelegramIdForGateway,
+    encryptPhoneForGateway,
     type EncryptChannelResult,
 } from './encryption.js';
 
