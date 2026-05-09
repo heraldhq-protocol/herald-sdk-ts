@@ -3,6 +3,7 @@ import naclUtil from 'tweetnacl-util';
 const { decodeUTF8, encodeUTF8 } = naclUtil;
 import type { PublicKey } from '@solana/web3.js';
 import { deriveX25519FromEd25519, deriveX25519SecretFromEd25519 } from '../encryption/conversion.js';
+import type { EncryptEmailResult } from '../encryption/nacl.js';
 import { HeraldError } from '../errors/index.js';
 import { MAX_ENCRYPTED_TELEGRAM_ID_LEN, MAX_ENCRYPTED_PHONE_LEN } from './types.js';
 
@@ -66,6 +67,114 @@ export async function encryptPhone(
     }
 
     return encryptChannelData(phoneE164, walletPubkey, MAX_ENCRYPTED_PHONE_LEN);
+}
+
+/**
+ * Encrypts an email for the Herald Gateway's X25519 public key.
+ *
+ * Unlike `encryptEmail()` which encrypts for the user's wallet, this encrypts
+ * for the gateway so it can decrypt and deliver the notification.
+ *
+ * Output format: [ephemeral_pubkey(32) || nacl_box_ciphertext]
+ * The gateway's EnclaveService.directNaclBoxDecrypt() handles this format.
+ *
+ * @param email - Plaintext email address.
+ * @param gatewayX25519Pubkey - Gateway's 32-byte X25519 public key.
+ */
+export function encryptEmailForGateway(
+    email: string,
+    gatewayX25519Pubkey: Uint8Array,
+): EncryptEmailResult {
+    const ephemeral = nacl.box.keyPair();
+    const nonce = nacl.randomBytes(nacl.box.nonceLength);
+    const emailBytes = decodeUTF8(email);
+    const ciphertext = nacl.box(emailBytes, nonce, gatewayX25519Pubkey, ephemeral.secretKey);
+
+    if (!ciphertext) {
+        throw new HeraldError('NaCl box encryption failed — check gateway public key');
+    }
+
+    const encryptedEmail = new Uint8Array(32 + ciphertext.length);
+    encryptedEmail.set(ephemeral.publicKey, 0);
+    encryptedEmail.set(ciphertext, 32);
+
+    if (encryptedEmail.length > 200) {
+        throw new HeraldError(
+            `Encrypted email (${encryptedEmail.length} bytes) exceeds 200 byte maximum. ` +
+            `Email address is too long.`,
+            6000,
+        );
+    }
+
+    ephemeral.secretKey.fill(0);
+
+    return { encryptedEmail, nonce };
+}
+
+/**
+ * Encrypts a Telegram chat_id for the Herald Gateway's X25519 public key.
+ */
+export async function encryptTelegramIdForGateway(
+    telegramChatId: string,
+    gatewayX25519Pubkey: Uint8Array,
+): Promise<EncryptChannelResult> {
+    if (!/^-?\d+$/.test(telegramChatId)) {
+        throw new HeraldError('Invalid Telegram chat ID format — must be a decimal integer');
+    }
+    if (telegramChatId.length > 15) {
+        throw new HeraldError('Telegram chat ID too long');
+    }
+
+    return encryptChannelDataForGateway(telegramChatId, gatewayX25519Pubkey, MAX_ENCRYPTED_TELEGRAM_ID_LEN);
+}
+
+/**
+ * Encrypts an E.164 phone number for the Herald Gateway's X25519 public key.
+ */
+export async function encryptPhoneForGateway(
+    phoneE164: string,
+    gatewayX25519Pubkey: Uint8Array,
+): Promise<EncryptChannelResult> {
+    if (!/^\+[1-9]\d{6,14}$/.test(phoneE164)) {
+        throw new HeraldError(
+            'Invalid phone number format. Use E.164 format: +14155552671',
+        );
+    }
+
+    return encryptChannelDataForGateway(phoneE164, gatewayX25519Pubkey, MAX_ENCRYPTED_PHONE_LEN);
+}
+
+/**
+ * Core encryption function for gateway-encrypted channel data.
+ * Uses the gateway's X25519 pubkey as the NaCl box recipient.
+ */
+async function encryptChannelDataForGateway(
+    plaintext: string,
+    gatewayX25519Pubkey: Uint8Array,
+    maxBytes: number,
+): Promise<EncryptChannelResult> {
+    const ephemeral = nacl.box.keyPair();
+    const nonce = nacl.randomBytes(nacl.box.nonceLength);
+    const plaintextBytes = decodeUTF8(plaintext);
+    const ciphertext = nacl.box(plaintextBytes, nonce, gatewayX25519Pubkey, ephemeral.secretKey);
+
+    if (!ciphertext) throw new HeraldError('Encryption failed');
+
+    const encrypted = new Uint8Array(32 + ciphertext.length);
+    encrypted.set(ephemeral.publicKey, 0);
+    encrypted.set(ciphertext, 32);
+
+    if (encrypted.length > maxBytes) {
+        throw new HeraldError(`Encrypted data (${encrypted.length}B) exceeds ${maxBytes}B limit`);
+    }
+
+    const hash = new Uint8Array(
+        await crypto.subtle.digest('SHA-256', new TextEncoder().encode(plaintext)),
+    );
+
+    ephemeral.secretKey.fill(0);
+
+    return { encrypted, hash, nonce };
 }
 
 /**
