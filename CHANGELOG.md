@@ -5,6 +5,24 @@ All notable changes to the `@herald-protocol/sdk` will be documented in this fil
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.0](https://github.com/heraldhq-protocol/herald-sdk-ts/compare/v1.4.0...v1.5.0) (2026-05-09)
+
+### ⚠ BREAKING CHANGES
+
+* **light:** `fetchProofForReceipt` signature changed to `fetchProofForReceipt(rpc, notificationId, recipientHash, programId)`
+
+### Features
+
+* **light:** migrate to ZK Compression V2 API
+  * Upgrade `@lightprotocol/stateless.js` `0.17.1` -> `0.23.3`
+  * Rewrite `fetchProofForReceipt` using V2 compressed PDA pattern
+  * Add `PackedAddressTreeInfo` type to `LightProofResponse`
+  * `ReceiptBatchProcessor` accepts `programId` for address derivation
+
+### Bug Fixes
+
+* **ci:** fix GitHub Actions CI by upgrading pnpm to v11
+
 ## [1.4.0](https://github.com/heraldhq-protocol/herald-sdk-ts/compare/v1.3.1...v1.4.0) (2026-05-08)
 
 
