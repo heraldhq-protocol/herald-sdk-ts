@@ -11,6 +11,26 @@ vi.mock('@solana/web3.js', async (importOriginal) => {
     };
 });
 
+// Mock the heavy stateless.js imports used by proof.ts
+vi.mock('@lightprotocol/stateless.js', async (importOriginal) => {
+    const actual = await importOriginal<typeof import('@lightprotocol/stateless.js')>();
+    return {
+        ...actual,
+        deriveAddressSeedV2: vi.fn().mockReturnValue(new Uint8Array(32)),
+        deriveAddressV2: vi.fn().mockReturnValue(new PublicKey('11111111111111111111111111111111')),
+        PackedAccounts: vi.fn().mockImplementation(() => ({
+            addSystemAccounts: vi.fn(),
+            insertOrGet: vi.fn().mockReturnValue(0),
+            toAccountMetas: vi.fn().mockReturnValue({ remainingAccounts: [] }),
+        })),
+        SystemAccountMetaConfig: { new: vi.fn().mockReturnValue({}) },
+        selectStateTreeInfo: vi.fn().mockReturnValue({ tree: new PublicKey('11111111111111111111111111111111') }),
+        bn: vi.fn().mockReturnValue({}),
+    };
+});
+
+const MOCK_PROGRAM_ID = new PublicKey('2pxjAf8tLCakKVDuN4vY51B5TeaEQk4koPuk9NZvWqdf');
+
 describe('Light Protocol - batching', () => {
     let mockProgram: any;
     let mockLightRpc: any;
@@ -21,7 +41,7 @@ describe('Light Protocol - batching', () => {
         authority = Keypair.generate();
 
         mockProgram = {
-            programId: new PublicKey('11111111111111111111111111111111'),
+            programId: MOCK_PROGRAM_ID,
             provider: {
                 connection: {
                     getLatestBlockhash: vi.fn().mockResolvedValue({ blockhash: 'bh', lastValidBlockHeight: 100 }),
@@ -33,16 +53,24 @@ describe('Light Protocol - batching', () => {
                 writeReceipt: vi.fn().mockReturnThis(),
                 accounts: vi.fn().mockReturnThis(),
                 remainingAccounts: vi.fn().mockReturnThis(),
-                instruction: vi.fn().mockResolvedValue({ keys: [], programId: new PublicKey('11111111111111111111111111111111'), data: Buffer.alloc(0) }),
+                instruction: vi.fn().mockResolvedValue({ keys: [], programId: MOCK_PROGRAM_ID, data: Buffer.alloc(0) }),
             }
         };
 
+        // V2 Rpc mock — uses getValidityProofV0, getAddressTreeInfoV2, getStateTreeInfos
         mockLightRpc = {
-            getValidityProof: vi.fn().mockResolvedValue({
-                compressedProof: { a: [], b: [], c: [] },
-                outputTreeIndex: 0,
-                remainingAccounts: []
-            })
+            getAddressTreeInfoV2: vi.fn().mockResolvedValue({
+                tree: new PublicKey('11111111111111111111111111111111'),
+                queue: new PublicKey('11111111111111111111111111111111'),
+            }),
+            getValidityProofV0: vi.fn().mockResolvedValue({
+                compressedProof: { a: Array(32).fill(0), b: Array(64).fill(0), c: Array(32).fill(0) },
+                rootIndices: [0],
+            }),
+            getStateTreeInfos: vi.fn().mockResolvedValue([{
+                tree: new PublicKey('11111111111111111111111111111111'),
+                queue: new PublicKey('11111111111111111111111111111111'),
+            }]),
         };
     });
 
@@ -52,7 +80,7 @@ describe('Light Protocol - batching', () => {
 
     it('should queue receipts and flush when batch size is reached', async () => {
         const onFlushMock = vi.fn();
-        const processor = new ReceiptBatchProcessor(mockProgram, authority, mockLightRpc, onFlushMock);
+        const processor = new ReceiptBatchProcessor(mockProgram, authority, mockLightRpc, MOCK_PROGRAM_ID, onFlushMock);
 
         // Add 9 receipts (below limit)
         for (let i = 0; i < 9; i++) {
@@ -65,7 +93,7 @@ describe('Light Protocol - batching', () => {
             });
         }
 
-        expect(mockLightRpc.getValidityProof).not.toHaveBeenCalled();
+        expect(mockLightRpc.getValidityProofV0).not.toHaveBeenCalled();
 
         // Add 10th receipt -> should trigger immediate synchronous flush
         processor.add({
@@ -76,16 +104,15 @@ describe('Light Protocol - batching', () => {
             category: NOTIFICATION_CATEGORIES.OTHER
         });
 
-        // Because flush is async, we use runAllTimersAsync to let the promise chain complete
         await vi.runAllTimersAsync();
 
-        expect(mockLightRpc.getValidityProof).toHaveBeenCalledTimes(1);
+        expect(mockLightRpc.getValidityProofV0).toHaveBeenCalledTimes(10);
         expect(onFlushMock).toHaveBeenCalled();
     });
 
     it('should flush after the 2-second interval if queue is not full', async () => {
         const onFlushMock = vi.fn();
-        const processor = new ReceiptBatchProcessor(mockProgram, authority, mockLightRpc, onFlushMock);
+        const processor = new ReceiptBatchProcessor(mockProgram, authority, mockLightRpc, MOCK_PROGRAM_ID, onFlushMock);
 
         processor.add({
             authority: authority.publicKey,
@@ -95,12 +122,11 @@ describe('Light Protocol - batching', () => {
             category: NOTIFICATION_CATEGORIES.DEFI
         });
 
-        expect(mockLightRpc.getValidityProof).not.toHaveBeenCalled();
+        expect(mockLightRpc.getValidityProofV0).not.toHaveBeenCalled();
 
-        // Advance timer
         await vi.advanceTimersByTimeAsync(2000);
 
-        expect(mockLightRpc.getValidityProof).toHaveBeenCalledTimes(1);
+        expect(mockLightRpc.getValidityProofV0).toHaveBeenCalledTimes(1);
         expect(onFlushMock).toHaveBeenCalled();
     });
 });
