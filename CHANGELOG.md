@@ -5,6 +5,13 @@ All notable changes to the `@herald-protocol/sdk` will be documented in this fil
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.0](https://github.com/heraldhq-protocol/herald-sdk-ts/compare/v1.5.0...v1.6.0) (2026-05-17)
+
+
+### Features
+
+* add subscribe, unsubscribe, checkSubscription, and broadcast methods ([2837015](https://github.com/heraldhq-protocol/herald-sdk-ts/commit/283701527d6a79d9372aa3417f369ede237d7097))
+
 ## [1.5.0](https://github.com/heraldhq-protocol/herald-sdk-ts/compare/v1.4.0...v1.5.0) (2026-05-09)
 
 ### ⚠ BREAKING CHANGES
