@@ -125,6 +125,10 @@ export {
   type NotificationStatusResult,
   type BulkNotifyParams,
   type BulkNotifyResult,
+  type SubscribeParams,
+  type SubscriptionStatus,
+  type BroadcastParams,
+  type BroadcastResult,
 } from "./herald.js";
 
 // ── Helio Billing ─────────────────────────────────────────────

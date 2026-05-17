@@ -114,6 +114,45 @@ export interface BulkNotifyResult {
     batchId: string;
 }
 
+export interface SubscribeParams {
+    /** Wallet address to subscribe (base58). */
+    walletAddress: string;
+    /** Channels to subscribe on. @default ['email'] */
+    channels?: ('email' | 'telegram' | 'sms')[];
+}
+
+export interface SubscriptionStatus {
+    subscribed: boolean;
+    channels: string[];
+    subscribedAt?: string;
+}
+
+export interface BroadcastParams {
+    /** Notification subject line. Max 200 chars. */
+    subject: string;
+    /** Notification body text or markdown. Max 10,000 chars. */
+    body: string;
+    /** Notification category — determines which opt-in flag is checked. @default 'defi' */
+    category?: NotifyCategory;
+    /** Write on-chain ZK receipts. @default true */
+    receipt?: boolean;
+    /** Custom email template ID (Growth+ tier). */
+    templateId?: string;
+}
+
+export interface BroadcastResult {
+    /** Broadcast batch ID. */
+    broadcast_id: string;
+    /** Number of subscribers enqueued for delivery. */
+    queued_count: number;
+    /** Total active subscribers at the time of broadcast. */
+    total_subscribers: number;
+    /** Subscribers skipped (no known wallet pubkey). */
+    skipped_count: number;
+    /** Estimated delivery time in seconds. */
+    estimated_delivery_s: number;
+}
+
 const GATEWAY_URLS: Record<HeraldEnvironment, string> = {
     production: 'https://api.useherald.xyz',
     development: 'http://localhost:3000',
@@ -241,6 +280,50 @@ export class Herald {
      */
     async getUsage(): Promise<{ limit: number; remaining: number; resetAt: number }> {
         return this.request('GET', `/v1/usage`);
+    }
+
+    /**
+     * Subscribe a wallet to your protocol's notifications.
+     * The wallet will receive future broadcasts from your protocol.
+     * Idempotent — safe to call on every user login.
+     */
+    async subscribe(params: SubscribeParams): Promise<{ subscribed: boolean }> {
+        return this.request<{ subscribed: boolean }>('POST', '/v1/subscriptions', {
+            walletAddress: params.walletAddress,
+            channels: params.channels ?? ['email'],
+        });
+    }
+
+    /**
+     * Unsubscribe a wallet from your protocol's notifications.
+     * The wallet will no longer receive broadcasts from your protocol.
+     */
+    async unsubscribe(walletAddress: string): Promise<{ unsubscribed: boolean }> {
+        return this.request<{ unsubscribed: boolean }>('DELETE', '/v1/subscriptions', {
+            walletAddress,
+        });
+    }
+
+    /**
+     * Check if a wallet is subscribed to your protocol.
+     */
+    async checkSubscription(walletAddress: string): Promise<SubscriptionStatus> {
+        return this.request<SubscriptionStatus>('GET', `/v1/subscriptions/${walletAddress}`);
+    }
+
+    /**
+     * Broadcast a notification to all subscribers of your protocol.
+     * Only wallets that have subscribed (via SDK, join link, or API) will receive it.
+     * Requires Growth tier or above.
+     */
+    async broadcast(params: BroadcastParams): Promise<BroadcastResult> {
+        return this.request<BroadcastResult>('POST', '/v1/notify/broadcast', {
+            subject: params.subject,
+            body: params.body,
+            category: params.category ?? 'defi',
+            writeReceipt: params.receipt ?? true,
+            templateId: params.templateId,
+        });
     }
 
     /**
