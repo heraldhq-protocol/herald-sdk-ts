@@ -116,6 +116,8 @@ export interface NotificationStatusResult {
     lastReceiptAttemptAt: string | null;
     /** Whether a ZK receipt was requested for this notification. */
     writeReceipt: boolean;
+    /** Channel used for delivery: 'email' | 'telegram' | 'sms' | null */
+    deliveryChannel: string | null;
     /** Email provider used (e.g. 'ses', 'resend'). */
     emailProvider: string | null;
     /** Whether the notification bounced. */
@@ -559,6 +561,7 @@ export class Herald {
             receiptFailureReason: (raw.receipt_failure_reason ?? null) as string | null,
             lastReceiptAttemptAt: (raw.last_receipt_attempt_at ?? null) as string | null,
             writeReceipt: (raw.write_receipt ?? false) as boolean,
+            deliveryChannel: (raw.delivery_channel ?? null) as string | null,
             emailProvider: (raw.email_provider ?? null) as string | null,
             bounce: (raw.bounce ?? false) as boolean,
         };
