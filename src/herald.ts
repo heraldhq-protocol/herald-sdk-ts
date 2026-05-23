@@ -936,9 +936,8 @@ export class Herald {
 
         try {
             const headers: Record<string, string> = {
-                'X-API-Key': this.apiKey,
+                'Authorization': `Bearer ${this.apiKey}`,
                 'Content-Type': 'application/json',
-                'User-Agent': 'herald-sdk-ts/1.6.0',
             };
 
             const fetchOptions: RequestInit = {
