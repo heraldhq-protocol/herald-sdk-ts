@@ -192,6 +192,248 @@ export interface UsageResult {
     resetAt: number;
 }
 
+// ── Notification list ───────────────────────────────────────────────────────
+
+export interface NotificationListItem {
+    notification_id: string;
+    status: string;
+    category: string;
+    created_at: string;
+    delivered_at: string | null;
+    receipt_status: ReceiptStatus;
+    receipt_tx: string | null;
+    bounce: boolean;
+}
+
+export interface NotificationListResult {
+    data: NotificationListItem[];
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+}
+
+// ── Preview ─────────────────────────────────────────────────────────────────
+
+export interface PreviewResult {
+    renderedHtml?: string;
+    telegramText?: string;
+    smsText?: string;
+}
+
+// ── Scheduled notifications ─────────────────────────────────────────────────
+
+export type ScheduleStatus = 'PENDING' | 'RUNNING' | 'COMPLETED' | 'CANCELLED';
+
+export interface ScheduledNotification {
+    id: string;
+    protocolId: string;
+    wallet: string | null;
+    subject: string;
+    body: string;
+    category: string;
+    channels: string[];
+    scheduleType: 'ONE_TIME' | 'RECURRING';
+    timezone: string;
+    cronExpr: string | null;
+    nextRunAt: string;
+    lastRunAt: string | null;
+    status: ScheduleStatus;
+    templateId: string | null;
+    createdAt: string;
+    updatedAt: string;
+}
+
+export interface ScheduleOnceParams {
+    /** Recipient wallet address. Omit for broadcast-style scheduled sends. */
+    wallet?: string;
+    subject: string;
+    body: string;
+    category?: NotifyCategory;
+    channels?: DeliveryChannel[];
+    /** ISO 8601 datetime — when to send. */
+    scheduledFor: string;
+    /** IANA timezone identifier. @default 'UTC' */
+    timezone?: string;
+    templateId?: string;
+}
+
+export interface ScheduleRecurringParams {
+    wallet?: string;
+    subject: string;
+    body: string;
+    category?: NotifyCategory;
+    channels?: DeliveryChannel[];
+    /** Standard 5-field cron expression (evaluated in UTC). */
+    cronExpr: string;
+    /** IANA timezone identifier. @default 'UTC' */
+    timezone?: string;
+    templateId?: string;
+}
+
+export interface ScheduleListResult {
+    items: ScheduledNotification[];
+    total: number;
+    page: number;
+    limit: number;
+}
+
+// ── Webhooks ────────────────────────────────────────────────────────────────
+
+export type WebhookEvent =
+    | 'notification.delivered'
+    | 'notification.failed'
+    | 'notification.bounced'
+    | 'notification.opted_out';
+
+export interface WebhookResult {
+    id: string;
+    url: string;
+    events: string[];
+    /** Only present on creation — store this securely, it is shown once. */
+    secret?: string;
+    is_active: boolean;
+    failure_count?: number;
+    last_success_at: string | null;
+    created_at: string;
+}
+
+export interface CreateWebhookParams {
+    /** HTTPS URL Herald will POST events to. */
+    url: string;
+    /** Events to subscribe to. @default ['notification.delivered'] */
+    events?: WebhookEvent[];
+    name?: string;
+}
+
+export interface UpdateWebhookParams {
+    url?: string;
+    events?: WebhookEvent[];
+    isActive?: boolean;
+}
+
+// ── Email templates ─────────────────────────────────────────────────────────
+
+export type HeraldFooter = 'full' | 'small' | 'minimal' | 'none' | 'enterprise';
+
+export interface EmailTemplate {
+    id: string;
+    name: string;
+    category: string;
+    subjectTemplate?: string;
+    previewText?: string;
+    heraldFooter: HeraldFooter;
+    isDefault: boolean;
+    isActive: boolean;
+    version: number;
+    createdAt: string;
+    updatedAt: string;
+}
+
+export interface CreateEmailTemplateParams {
+    name: string;
+    category: string;
+    /** Handlebars/Liquid subject with template vars. */
+    subjectTemplate?: string;
+    /** Full HTML source. Max 51,200 chars. */
+    htmlSource: string;
+    /** Plain-text fallback. Max 5,000 chars. */
+    textSource?: string;
+    previewText?: string;
+    heraldFooter?: HeraldFooter;
+    isDefault?: boolean;
+}
+
+export interface UpdateEmailTemplateParams {
+    name?: string;
+    category?: string;
+    subjectTemplate?: string;
+    htmlSource?: string;
+    textSource?: string;
+    previewText?: string;
+    heraldFooter?: HeraldFooter;
+    isDefault?: boolean;
+    isActive?: boolean;
+}
+
+// ── Analytics ───────────────────────────────────────────────────────────────
+
+export type AnalyticsPeriod = '7d' | '30d' | '90d';
+
+export interface AnalyticsResult {
+    period: AnalyticsPeriod;
+    total_sends: number;
+    delivery_rate: number;
+    bounce_rate: number;
+    opted_out_rate: number;
+    failure_rate: number;
+    breakdown: {
+        delivered: number;
+        failed: number;
+        opted_out: number;
+        bounced: number;
+    };
+}
+
+export interface EngagementResult {
+    totalSends: number;
+    opens: number;
+    clicks: number;
+    unsubscribes: number;
+    openRate: number;
+    clickRate: number;
+    unsubscribeRate: number;
+    period: { from: string; to: string };
+}
+
+export interface AudienceResult {
+    totalRegistered: number;
+    broadcastableSubscribers: number;
+    activeLastThirtyDays: number;
+    retentionRate: number;
+    channelCoverage: { email: number; telegram: number; sms: number };
+    bySource: Record<string, number>;
+    registrationTrend: Array<{ date: string; count: number }>;
+}
+
+// ── API request log ─────────────────────────────────────────────────────────
+
+export interface ApiRequestLogItem {
+    id: string;
+    apiKeyId: string;
+    isTestKey: boolean;
+    method: string;
+    endpoint: string;
+    statusCode: number;
+    latencyMs: number;
+    correlationId: string;
+    createdAt: string;
+}
+
+export interface ApiRequestLogResult {
+    items: ApiRequestLogItem[];
+    total: number;
+    page: number;
+    limit: number;
+    hasMore: boolean;
+}
+
+// ── Protocol info ───────────────────────────────────────────────────────────
+
+export interface ProtocolInfo {
+    id: string;
+    protocol_pubkey: string;
+    tier: number;
+    tier_name: string;
+    is_active: boolean;
+    is_suspended: boolean;
+    sends_this_period: number;
+    period_reset_at: string;
+    subscription_expires_at: string | null;
+    counts: { api_keys: number; webhooks: number; notifications: number };
+    created_at: string;
+}
+
 const GATEWAY_URLS: Record<HeraldEnvironment, string> = {
     production: 'https://api.useherald.xyz',
     development: 'http://localhost:3000',
@@ -399,6 +641,253 @@ export class Herald {
             receipt: params.receipt ?? false,
             templateId: params.templateId,
         });
+    }
+
+    // ── Notification list ───────────────────────────────────────────────────
+
+    /**
+     * List notifications sent by your protocol, newest first.
+     */
+    async listNotifications(params: { page?: number; limit?: number } = {}): Promise<NotificationListResult> {
+        const qs = new URLSearchParams();
+        if (params.page) qs.set('page', String(params.page));
+        if (params.limit) qs.set('limit', String(params.limit));
+        const query = qs.toString();
+        return this.request<NotificationListResult>('GET', `/v1/notifications${query ? `?${query}` : ''}`);
+    }
+
+    // ── Preview ─────────────────────────────────────────────────────────────
+
+    /**
+     * Render a notification without sending it.
+     * Returns the HTML, Telegram markdown, and SMS text that would be delivered.
+     */
+    async preview(params: NotifyParams): Promise<PreviewResult> {
+        return this.request<PreviewResult>('POST', '/v1/preview', {
+            wallet: params.wallet,
+            subject: params.subject,
+            body: params.body,
+            category: params.category ?? 'defi',
+            priority: params.priority,
+            preferred_channel: params.preferredChannel,
+            receipt: params.receipt,
+            idempotencyKey: params.idempotencyKey,
+            templateId: params.templateId,
+            telegramTemplateId: params.telegramTemplateId,
+            templateVariables: params.templateVariables,
+        });
+    }
+
+    // ── Scheduled notifications ─────────────────────────────────────────────
+
+    /**
+     * Schedule a one-time notification to be delivered at a specific time.
+     */
+    async scheduleOnce(params: ScheduleOnceParams): Promise<ScheduledNotification> {
+        return this.request<ScheduledNotification>('POST', '/v1/schedule', {
+            wallet: params.wallet,
+            subject: params.subject,
+            body: params.body,
+            category: params.category ?? 'defi',
+            channels: params.channels,
+            scheduledFor: params.scheduledFor,
+            timezone: params.timezone ?? 'UTC',
+            templateId: params.templateId,
+        });
+    }
+
+    /**
+     * Schedule a recurring notification using a cron expression.
+     * The cron expression is evaluated in UTC unless timezone is specified.
+     *
+     * @example herald.scheduleRecurring({ cronExpr: '0 9 * * 1', subject: 'Weekly digest', ... })
+     */
+    async scheduleRecurring(params: ScheduleRecurringParams): Promise<ScheduledNotification> {
+        return this.request<ScheduledNotification>('POST', '/v1/schedule/cron', {
+            wallet: params.wallet,
+            subject: params.subject,
+            body: params.body,
+            category: params.category ?? 'defi',
+            channels: params.channels,
+            cronExpr: params.cronExpr,
+            timezone: params.timezone ?? 'UTC',
+            templateId: params.templateId,
+        });
+    }
+
+    /**
+     * List all scheduled notifications for your protocol.
+     */
+    async listScheduled(params: { page?: number; limit?: number } = {}): Promise<ScheduleListResult> {
+        const qs = new URLSearchParams();
+        if (params.page) qs.set('page', String(params.page));
+        if (params.limit) qs.set('limit', String(params.limit));
+        const query = qs.toString();
+        return this.request<ScheduleListResult>('GET', `/v1/schedule${query ? `?${query}` : ''}`);
+    }
+
+    /**
+     * Cancel a scheduled notification. Has no effect if already sent.
+     */
+    async cancelScheduled(scheduleId: string): Promise<{ cancelled: boolean }> {
+        return this.request<{ cancelled: boolean }>('DELETE', `/v1/schedule/${scheduleId}`);
+    }
+
+    // ── Webhooks ────────────────────────────────────────────────────────────
+
+    /**
+     * Register a new webhook endpoint.
+     * The `secret` in the response is shown **once** — store it securely.
+     * Use it with `Herald.verifyWebhookSignature()` to validate inbound events.
+     */
+    async createWebhook(params: CreateWebhookParams): Promise<WebhookResult> {
+        return this.request<WebhookResult>('POST', '/v1/webhooks', {
+            url: params.url,
+            events: params.events ?? ['notification.delivered'],
+            name: params.name,
+        });
+    }
+
+    /**
+     * List all registered webhook endpoints. Secrets are not included.
+     */
+    async listWebhooks(): Promise<WebhookResult[]> {
+        return this.request<WebhookResult[]>('GET', '/v1/webhooks');
+    }
+
+    /**
+     * Update a webhook's URL, subscribed events, or active status.
+     */
+    async updateWebhook(webhookId: string, params: UpdateWebhookParams): Promise<{ updated: boolean }> {
+        return this.request<{ updated: boolean }>('PATCH', `/v1/webhooks/${webhookId}`, {
+            url: params.url,
+            events: params.events,
+            isActive: params.isActive,
+        });
+    }
+
+    /**
+     * Delete a webhook endpoint.
+     */
+    async deleteWebhook(webhookId: string): Promise<void> {
+        await this.request('DELETE', `/v1/webhooks/${webhookId}`);
+    }
+
+    /**
+     * Send a test event to a webhook to verify connectivity.
+     */
+    async testWebhook(webhookId: string): Promise<{ message: string; webhook_id: string; url: string }> {
+        return this.request<{ message: string; webhook_id: string; url: string }>(
+            'POST',
+            `/v1/webhooks/${webhookId}/test`,
+        );
+    }
+
+    // ── Email templates ─────────────────────────────────────────────────────
+
+    /**
+     * Create a custom email template (Growth+ tier).
+     * Returns the new template ID.
+     */
+    async createEmailTemplate(params: CreateEmailTemplateParams): Promise<{ success: boolean; templateId: string }> {
+        return this.request<{ success: boolean; templateId: string }>('POST', '/v1/templates/email', {
+            name: params.name,
+            category: params.category,
+            subjectTemplate: params.subjectTemplate,
+            htmlSource: params.htmlSource,
+            textSource: params.textSource,
+            previewText: params.previewText,
+            heraldFooter: params.heraldFooter,
+            isDefault: params.isDefault,
+        });
+    }
+
+    /**
+     * List all custom email templates for your protocol.
+     */
+    async listEmailTemplates(): Promise<{ data: EmailTemplate[] }> {
+        return this.request<{ data: EmailTemplate[] }>('GET', '/v1/templates/email');
+    }
+
+    /**
+     * Get a single email template by ID.
+     */
+    async getEmailTemplate(templateId: string): Promise<EmailTemplate> {
+        return this.request<EmailTemplate>('GET', `/v1/templates/email/${templateId}`);
+    }
+
+    /**
+     * Update an email template. Creates a new version — previous version is preserved.
+     */
+    async updateEmailTemplate(templateId: string, params: UpdateEmailTemplateParams): Promise<EmailTemplate> {
+        return this.request<EmailTemplate>('PUT', `/v1/templates/email/${templateId}`, params as Record<string, unknown>);
+    }
+
+    /**
+     * Soft-delete an email template.
+     */
+    async deleteEmailTemplate(templateId: string): Promise<void> {
+        await this.request('DELETE', `/v1/templates/email/${templateId}`);
+    }
+
+    // ── Analytics ───────────────────────────────────────────────────────────
+
+    /**
+     * Get delivery analytics for the specified period.
+     */
+    async getAnalytics(period: AnalyticsPeriod = '30d'): Promise<AnalyticsResult> {
+        return this.request<AnalyticsResult>('GET', `/v1/analytics?period=${period}`);
+    }
+
+    /**
+     * Get open, click, and unsubscribe rates for a date range.
+     */
+    async getEngagement(params: { startDate?: string; endDate?: string; templateId?: string } = {}): Promise<EngagementResult> {
+        const qs = new URLSearchParams();
+        if (params.startDate) qs.set('startDate', params.startDate);
+        if (params.endDate) qs.set('endDate', params.endDate);
+        if (params.templateId) qs.set('templateId', params.templateId);
+        const query = qs.toString();
+        return this.request<EngagementResult>('GET', `/v1/engagement${query ? `?${query}` : ''}`);
+    }
+
+    /**
+     * Get subscriber counts, channel coverage, and registration trends.
+     */
+    async getAudience(): Promise<AudienceResult> {
+        return this.request<AudienceResult>('GET', '/v1/audience');
+    }
+
+    // ── API request log ─────────────────────────────────────────────────────
+
+    /**
+     * Inspect recent API requests made with your API keys.
+     * Useful for debugging delivery flows.
+     */
+    async getRequestLog(params: {
+        page?: number;
+        limit?: number;
+        statusCode?: number;
+        endpoint?: string;
+        isTestKey?: boolean;
+    } = {}): Promise<ApiRequestLogResult> {
+        const qs = new URLSearchParams();
+        if (params.page) qs.set('page', String(params.page));
+        if (params.limit) qs.set('limit', String(params.limit));
+        if (params.statusCode !== undefined) qs.set('statusCode', String(params.statusCode));
+        if (params.endpoint) qs.set('endpoint', params.endpoint);
+        if (params.isTestKey !== undefined) qs.set('isTestKey', String(params.isTestKey));
+        const query = qs.toString();
+        return this.request<ApiRequestLogResult>('GET', `/v1/requests${query ? `?${query}` : ''}`);
+    }
+
+    // ── Protocol info ───────────────────────────────────────────────────────
+
+    /**
+     * Get your protocol's current tier, usage, and subscription status.
+     */
+    async getProtocol(): Promise<ProtocolInfo> {
+        return this.request<ProtocolInfo>('GET', '/v1/protocols/me');
     }
 
     /**
