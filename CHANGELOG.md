@@ -5,6 +5,13 @@ All notable changes to the `@herald-protocol/sdk` will be documented in this fil
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.7.1](https://github.com/heraldhq-protocol/herald-sdk-ts/compare/v1.7.0...v1.7.1) (2026-05-23)
+
+
+### Bug Fixes
+
+* **herald:** send Authorization: Bearer header instead of X-API-Key ([89f9b2b](https://github.com/heraldhq-protocol/herald-sdk-ts/commit/89f9b2b15b218ccca108ae2eaa8643d6755d55c2))
+
 ## [1.7.0](https://github.com/heraldhq-protocol/herald-sdk-ts/compare/v1.6.0...v1.7.0) (2026-05-23)
 
 
