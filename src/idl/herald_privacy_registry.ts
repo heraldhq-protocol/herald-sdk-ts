@@ -16,21 +16,87 @@ export const HeraldIdl = {
   },
   "instructions": [
     {
+      "name": "initialize_config",
+      "docs": [
+        "Initialize the GlobalConfig PDA. One-time call after program deployment.",
+        "Sets the Herald authority to `initial_authority` (should be the KMS pubkey)."
+      ],
+      "discriminator": [208, 127, 21, 1, 194, 190, 196, 70],
+      "accounts": [
+        {
+          "name": "payer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "global_config",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [103, 108, 111, 98, 97, 108, 95, 99, 111, 110, 102, 105, 103]
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "initial_authority",
+          "type": "pubkey"
+        }
+      ]
+    },
+    {
+      "name": "update_authority",
+      "docs": [
+        "Rotate the Herald authority to a new pubkey.",
+        "The current authority must sign. Takes effect immediately."
+      ],
+      "discriminator": [32, 46, 64, 28, 149, 75, 243, 88],
+      "accounts": [
+        {
+          "name": "authority",
+          "signer": true
+        },
+        {
+          "name": "global_config",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [103, 108, 111, 98, 97, 108, 95, 99, 111, 110, 102, 105, 103]
+              }
+            ]
+          }
+        }
+      ],
+      "args": [
+        {
+          "name": "new_authority",
+          "type": "pubkey"
+        }
+      ]
+    },
+    {
       "name": "deactivate_protocol",
       "docs": [
         "Deactivate a protocol (soft deactivation). Only callable by the Herald authority."
       ],
-      "discriminator": [
-        72,
-        138,
-        91,
-        107,
-        75,
-        27,
-        252,
-        191
-      ],
+      "discriminator": [72, 138, 91, 107, 75, 27, 252, 191],
       "accounts": [
+        {
+          "name": "global_config",
+          "pda": {
+            "seeds": [{"kind": "const", "value": [103, 108, 111, 98, 97, 108, 95, 99, 111, 110, 102, 105, 103]}]
+          }
+        },
         {
           "name": "authority",
           "signer": true
@@ -444,17 +510,14 @@ export const HeraldIdl = {
       "docs": [
         "Reactivate a deactivated (non-suspended) protocol. Only callable by the Herald authority."
       ],
-      "discriminator": [
-        163,
-        46,
-        191,
-        81,
-        249,
-        206,
-        97,
-        218
-      ],
+      "discriminator": [163, 46, 191, 81, 249, 206, 97, 218],
       "accounts": [
+        {
+          "name": "global_config",
+          "pda": {
+            "seeds": [{"kind": "const", "value": [103, 108, 111, 98, 97, 108, 95, 99, 111, 110, 102, 105, 103]}]
+          }
+        },
         {
           "name": "authority",
           "signer": true
@@ -656,21 +719,18 @@ export const HeraldIdl = {
       "docs": [
         "Register a new DeFi protocol. Only callable by the Herald authority."
       ],
-      "discriminator": [
-        63,
-        107,
-        156,
-        136,
-        249,
-        231,
-        183,
-        65
-      ],
+      "discriminator": [63, 107, 156, 136, 249, 231, 183, 65],
       "accounts": [
+        {
+          "name": "global_config",
+          "pda": {
+            "seeds": [{"kind": "const", "value": [103, 108, 111, 98, 97, 108, 95, 99, 111, 110, 102, 105, 103]}]
+          }
+        },
         {
           "name": "authority",
           "docs": [
-            "Herald backend authority – pays rent and must match `HERALD_AUTHORITY`."
+            "Herald backend authority – pays rent. Must match `global_config.authority`."
           ],
           "writable": true,
           "signer": true
@@ -937,17 +997,14 @@ export const HeraldIdl = {
         "Renew (or initially activate) a protocol's monthly subscription.",
         "Called by the Herald backend after confirming off-chain payment (Helio)."
       ],
-      "discriminator": [
-        45,
-        75,
-        154,
-        194,
-        160,
-        10,
-        111,
-        183
-      ],
+      "discriminator": [45, 75, 154, 194, 160, 10, 111, 183],
       "accounts": [
+        {
+          "name": "global_config",
+          "pda": {
+            "seeds": [{"kind": "const", "value": [103, 108, 111, 98, 97, 108, 95, 99, 111, 110, 102, 105, 103]}]
+          }
+        },
         {
           "name": "authority",
           "signer": true
@@ -968,17 +1025,14 @@ export const HeraldIdl = {
       "docs": [
         "Reset a protocol's sends counter at the end of a billing period."
       ],
-      "discriminator": [
-        58,
-        194,
-        230,
-        54,
-        122,
-        247,
-        39,
-        216
-      ],
+      "discriminator": [58, 194, 230, 54, 122, 247, 39, 216],
       "accounts": [
+        {
+          "name": "global_config",
+          "pda": {
+            "seeds": [{"kind": "const", "value": [103, 108, 111, 98, 97, 108, 95, 99, 111, 110, 102, 105, 103]}]
+          }
+        },
         {
           "name": "authority",
           "signer": true
@@ -1129,17 +1183,14 @@ export const HeraldIdl = {
       "docs": [
         "Hard-suspend a protocol (e.g. ToS violation). Only callable by the Herald authority."
       ],
-      "discriminator": [
-        75,
-        109,
-        6,
-        78,
-        243,
-        239,
-        250,
-        137
-      ],
+      "discriminator": [75, 109, 6, 78, 243, 239, 250, 137],
       "accounts": [
+        {
+          "name": "global_config",
+          "pda": {
+            "seeds": [{"kind": "const", "value": [103, 108, 111, 98, 97, 108, 95, 99, 111, 110, 102, 105, 103]}]
+          }
+        },
         {
           "name": "authority",
           "signer": true
@@ -1337,17 +1388,14 @@ export const HeraldIdl = {
       "docs": [
         "Update a protocol's tier level. Only callable by the Herald authority."
       ],
-      "discriminator": [
-        215,
-        12,
-        211,
-        175,
-        183,
-        69,
-        163,
-        183
-      ],
+      "discriminator": [215, 12, 211, 175, 183, 69, 163, 183],
       "accounts": [
+        {
+          "name": "global_config",
+          "pda": {
+            "seeds": [{"kind": "const", "value": [103, 108, 111, 98, 97, 108, 95, 99, 111, 110, 102, 105, 103]}]
+          }
+        },
         {
           "name": "authority",
           "signer": true
@@ -1441,17 +1489,14 @@ export const HeraldIdl = {
       "docs": [
         "Write a ZK-compressed delivery receipt via Light Protocol CPI."
       ],
-      "discriminator": [
-        209,
-        10,
-        117,
-        157,
-        52,
-        82,
-        248,
-        237
-      ],
+      "discriminator": [209, 10, 117, 157, 52, 82, 248, 237],
       "accounts": [
+        {
+          "name": "global_config",
+          "pda": {
+            "seeds": [{"kind": "const", "value": [103, 108, 111, 98, 97, 108, 95, 99, 111, 110, 102, 105, 103]}]
+          }
+        },
         {
           "name": "authority",
           "docs": [
@@ -1509,6 +1554,10 @@ export const HeraldIdl = {
     }
   ],
   "accounts": [
+    {
+      "name": "GlobalConfig",
+      "discriminator": [149, 8, 156, 202, 160, 252, 176, 217]
+    },
     {
       "name": "IdentityAccount",
       "discriminator": [
@@ -2037,6 +2086,28 @@ export const HeraldIdl = {
     }
   ],
   "types": [
+    {
+      "name": "GlobalConfig",
+      "docs": [
+        "Global program configuration — stores the Herald authority pubkey on-chain.",
+        "PDA seeds: [\"global_config\"]"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "authority",
+            "docs": ["Herald backend authority. Rotatable via `update_authority`."],
+            "type": "pubkey"
+          },
+          {
+            "name": "bump",
+            "docs": ["PDA bump, stored for convenience."],
+            "type": "u8"
+          }
+        ]
+      }
+    },
     {
       "name": "AnchorCompressedProof",
       "docs": [
