@@ -5,6 +5,13 @@ All notable changes to the `@herald-protocol/sdk` will be documented in this fil
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.8.0](https://github.com/heraldhq-protocol/herald-sdk-ts/compare/v1.7.2...v1.8.0) (2026-05-26)
+
+
+### Features
+
+* GlobalConfig PDA support — initializeConfig, updateAuthority, updateProtocolTier ([2a213d2](https://github.com/heraldhq-protocol/herald-sdk-ts/commit/2a213d2f94abe59190d0de06729b09837ab95044))
+
 ## [1.7.2](https://github.com/heraldhq-protocol/herald-sdk-ts/compare/v1.7.1...v1.7.2) (2026-05-23)
 
 
