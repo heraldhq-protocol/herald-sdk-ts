@@ -4,7 +4,7 @@ import {
     TransactionInstruction,
 } from '@solana/web3.js';
 import { BaseClient } from './base.js';
-import { findProtocolPda } from '../pda/index.js';
+import { findProtocolPda, findGlobalConfigPda } from '../pda/index.js';
 import { validateTier, validateCategory } from '../encryption/validation.js';
 import { HeraldError } from '../errors/index.js';
 import type {
@@ -14,7 +14,10 @@ import type {
     SuspendProtocolParams,
     RenewSubscriptionParams,
     ResetProtocolSendsParams,
+    UpdateProtocolTierParams,
     WriteReceiptParams,
+    InitializeConfigParams,
+    UpdateAuthorityParams,
 } from '../types/instructions.js';
 import type { HeraldConfig } from '../types/config.js';
 
@@ -30,42 +33,74 @@ export class AuthorityClient extends BaseClient {
         super(config);
     }
 
+    // ── GlobalConfig ────────────────────────────────────────────────
+
+    /**
+     * Build instruction to initialize the GlobalConfig PDA.
+     * Call once after first program deployment. Stores the authority on-chain
+     * so it can be rotated without a future program upgrade.
+     */
+    async initializeConfig(
+        params: InitializeConfigParams,
+    ): Promise<TransactionInstruction> {
+        const programId = new PublicKey(this.config.programId);
+        const [globalConfigPda] = findGlobalConfigPda(programId);
+
+        return await this.program.methods
+            .initializeConfig(params.initialAuthority)
+            .accounts({
+                payer: params.payer,
+                globalConfig: globalConfigPda,
+                systemProgram: SystemProgram.programId,
+            })
+            .instruction();
+    }
+
+    /**
+     * Build instruction to rotate the Herald authority stored in GlobalConfig.
+     * The current authority must sign. Takes effect immediately on-chain.
+     */
+    async updateAuthority(
+        params: UpdateAuthorityParams,
+    ): Promise<TransactionInstruction> {
+        const programId = new PublicKey(this.config.programId);
+        const [globalConfigPda] = findGlobalConfigPda(programId);
+
+        return await this.program.methods
+            .updateAuthority(params.newAuthority)
+            .accounts({
+                authority: params.authority,
+                globalConfig: globalConfigPda,
+            })
+            .instruction();
+    }
+
     // ── Protocol Lifecycle ──────────────────────────────────────────
 
     /**
      * Build instruction to register a brand new protocol on the registry.
-     * 
+     *
      * @param params - Parameters required to register a protocol.
      * @param params.authority - The Herald global authority public key (authorized signer).
      * @param params.protocolOwner - The public key of the protocol's developer wallet.
      * @param params.nameHash - SHA-256 hash of the protocol's plaintext name.
      * @param params.tier - Initial protocol usage tier (e.g., Free, Essential, Pro, Enterprise).
-     * 
+     *
      * @returns A promise resolving to an unsigned `TransactionInstruction`.
-     * 
-     * @example
-     * ```typescript
-     * const ix = await authorityClient.registerProtocol({
-     *   authority: HERALD_AUTHORITY,
-     *   protocolOwner: protocolDevWallet,
-     *   nameHash: hashedName,
-     *   tier: 1 // Example tier
-     * });
-     * ```
      */
     async registerProtocol(
         params: RegisterProtocolParams,
     ): Promise<TransactionInstruction> {
         validateTier(params.tier);
 
-        const [protocolPda] = findProtocolPda(
-            params.protocolOwner,
-            new PublicKey(this.config.programId),
-        );
+        const programId = new PublicKey(this.config.programId);
+        const [globalConfigPda] = findGlobalConfigPda(programId);
+        const [protocolPda] = findProtocolPda(params.protocolOwner, programId);
 
         return await this.program.methods
             .registerProtocol(Array.from(params.nameHash), params.tier)
             .accounts({
+                globalConfig: globalConfigPda,
                 authority: params.authority,
                 protocolAccount: protocolPda,
                 protocolPubkey: params.protocolOwner,
@@ -76,28 +111,18 @@ export class AuthorityClient extends BaseClient {
 
     /**
      * Build instruction to deactivate a protocol.
-     * 
-     * Deactivating a protocol prevents it from sending new notifications,
-     * though the data remains on-chain. Usually triggered by the protocol owner
-     * closing their account or halting services.
-     * 
-     * @param params - Parameters required to deactivate a protocol.
-     * @param params.authority - The Herald global authority public key.
-     * @param params.protocolOwner - The public key of the protocol to deactivate.
-     * 
-     * @returns A promise resolving to an unsigned `TransactionInstruction`.
      */
     async deactivateProtocol(
         params: DeactivateProtocolParams,
     ): Promise<TransactionInstruction> {
-        const [protocolPda] = findProtocolPda(
-            params.protocolOwner,
-            new PublicKey(this.config.programId),
-        );
+        const programId = new PublicKey(this.config.programId);
+        const [globalConfigPda] = findGlobalConfigPda(programId);
+        const [protocolPda] = findProtocolPda(params.protocolOwner, programId);
 
         return await this.program.methods
             .deactivateProtocol()
             .accounts({
+                globalConfig: globalConfigPda,
                 authority: params.authority,
                 protocolAccount: protocolPda,
             })
@@ -106,24 +131,18 @@ export class AuthorityClient extends BaseClient {
 
     /**
      * Build instruction to reactivate a formerly deactivated protocol.
-     * 
-     * @param params - Parameters required to reactivate a protocol.
-     * @param params.authority - The Herald global authority public key.
-     * @param params.protocolOwner - The public key of the protocol to reactivate.
-     * 
-     * @returns A promise resolving to an unsigned `TransactionInstruction`.
      */
     async reactivateProtocol(
         params: ReactivateProtocolParams,
     ): Promise<TransactionInstruction> {
-        const [protocolPda] = findProtocolPda(
-            params.protocolOwner,
-            new PublicKey(this.config.programId),
-        );
+        const programId = new PublicKey(this.config.programId);
+        const [globalConfigPda] = findGlobalConfigPda(programId);
+        const [protocolPda] = findProtocolPda(params.protocolOwner, programId);
 
         return await this.program.methods
             .reactivateProtocol()
             .accounts({
+                globalConfig: globalConfigPda,
                 authority: params.authority,
                 protocolAccount: protocolPda,
             })
@@ -131,30 +150,41 @@ export class AuthorityClient extends BaseClient {
     }
 
     /**
-     * Build instruction to suspend a protocol.
-     * 
-     * A suspension is triggered unilaterally by Herald due to abuse
-     * (e.g., spamming or violating terms of service).
-     * Suspended protocols cannot send notifications and cannot be 
-     * reactivated except by Herald staff intervention.
-     * 
-     * @param params - Parameters required to suspend a protocol.
-     * @param params.authority - The Herald global authority public key.
-     * @param params.protocolOwner - The public key of the protocol to suspend.
-     * 
-     * @returns A promise resolving to an unsigned `TransactionInstruction`.
+     * Build instruction to suspend a protocol (ToS violation).
      */
     async suspendProtocol(
         params: SuspendProtocolParams,
     ): Promise<TransactionInstruction> {
-        const [protocolPda] = findProtocolPda(
-            params.protocolOwner,
-            new PublicKey(this.config.programId),
-        );
+        const programId = new PublicKey(this.config.programId);
+        const [globalConfigPda] = findGlobalConfigPda(programId);
+        const [protocolPda] = findProtocolPda(params.protocolOwner, programId);
 
         return await this.program.methods
             .suspendProtocol()
             .accounts({
+                globalConfig: globalConfigPda,
+                authority: params.authority,
+                protocolAccount: protocolPda,
+            })
+            .instruction();
+    }
+
+    /**
+     * Build instruction to update a protocol's tier level.
+     */
+    async updateProtocolTier(
+        params: UpdateProtocolTierParams,
+    ): Promise<TransactionInstruction> {
+        validateTier(params.newTier);
+
+        const programId = new PublicKey(this.config.programId);
+        const [globalConfigPda] = findGlobalConfigPda(programId);
+        const [protocolPda] = findProtocolPda(params.protocolOwner, programId);
+
+        return await this.program.methods
+            .updateProtocolTier(params.newTier)
+            .accounts({
+                globalConfig: globalConfigPda,
                 authority: params.authority,
                 protocolAccount: protocolPda,
             })
@@ -164,26 +194,19 @@ export class AuthorityClient extends BaseClient {
     // ── Billing ─────────────────────────────────────────────────────
 
     /**
-     * Build instruction to renew a protocol's subscription for the next payment period.
-     * Modifies the on-chain subscription expiration time.
-     * 
-     * @param params - Parameters required to renew a subscription.
-     * @param params.authority - The Herald global authority public key.
-     * @param params.protocolOwner - The public key of the protocol being renewed.
-     * 
-     * @returns A promise resolving to an unsigned `TransactionInstruction`.
+     * Build instruction to renew a protocol's subscription.
      */
     async renewSubscription(
         params: RenewSubscriptionParams,
     ): Promise<TransactionInstruction> {
-        const [protocolPda] = findProtocolPda(
-            params.protocolOwner,
-            new PublicKey(this.config.programId),
-        );
+        const programId = new PublicKey(this.config.programId);
+        const [globalConfigPda] = findGlobalConfigPda(programId);
+        const [protocolPda] = findProtocolPda(params.protocolOwner, programId);
 
         return await this.program.methods
             .renewSubscription()
             .accounts({
+                globalConfig: globalConfigPda,
                 authority: params.authority,
                 protocolAccount: protocolPda,
             })
@@ -191,26 +214,19 @@ export class AuthorityClient extends BaseClient {
     }
 
     /**
-     * Build instruction to reset a protocol's daily/monthly send counters.
-     * Usually executed automatically by the backend CRON when billing periods roll over.
-     * 
-     * @param params - Parameters required to reset send counters.
-     * @param params.authority - The Herald global authority public key.
-     * @param params.protocolOwner - The public key of the protocol to reset.
-     * 
-     * @returns A promise resolving to an unsigned `TransactionInstruction`.
+     * Build instruction to reset a protocol's send counters.
      */
     async resetProtocolSends(
         params: ResetProtocolSendsParams,
     ): Promise<TransactionInstruction> {
-        const [protocolPda] = findProtocolPda(
-            params.protocolOwner,
-            new PublicKey(this.config.programId),
-        );
+        const programId = new PublicKey(this.config.programId);
+        const [globalConfigPda] = findGlobalConfigPda(programId);
+        const [protocolPda] = findProtocolPda(params.protocolOwner, programId);
 
         return await this.program.methods
             .resetProtocolSends()
             .accounts({
+                globalConfig: globalConfigPda,
                 authority: params.authority,
                 protocolAccount: protocolPda,
             })
@@ -226,18 +242,6 @@ export class AuthorityClient extends BaseClient {
      *   1. Fetch ValidityProof from Light RPC
      *   2. Get remaining accounts from Light RPC response
      *   3. Construct notificationId (UUID v4 as 16 bytes)
-     * 
-     * @param params - Parameters for writing the receipt.
-     * @param params.authority - The Herald global authority public key.
-     * @param params.protocolOwner - The public key of the protocol issuing the receipt.
-     * @param params.proof - The compressed validity proof fetched from Light Protocol.
-     * @param params.outputTreeIndex - Index of the output tree from the Light RPC.
-     * @param params.recipientHash - SHA-256 hash of the intended recipient's wallet address.
-     * @param params.notificationId - Bytes representing the unique ID of the notification.
-     * @param params.category - Activity category (e.g. DeFi, Governance) of this notification.
-     * @param params.lightRemainingAccounts - Extra accounts required by Light Protocol dynamically.
-     * 
-     * @returns A promise resolving to an unsigned `TransactionInstruction`.
      */
     async writeReceipt(
         params: WriteReceiptParams,
@@ -250,10 +254,9 @@ export class AuthorityClient extends BaseClient {
             throw new HeraldError('Notification ID must be 16 bytes', 6019);
         }
 
-        const [protocolPda] = findProtocolPda(
-            params.protocolOwner,
-            new PublicKey(this.config.programId),
-        );
+        const programId = new PublicKey(this.config.programId);
+        const [globalConfigPda] = findGlobalConfigPda(programId);
+        const [protocolPda] = findProtocolPda(params.protocolOwner, programId);
 
         return await this.program.methods
             .writeReceipt(
@@ -264,6 +267,7 @@ export class AuthorityClient extends BaseClient {
                 params.category,
             )
             .accounts({
+                globalConfig: globalConfigPda,
                 authority: params.authority,
                 protocolAccount: protocolPda,
             })

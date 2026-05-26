@@ -99,6 +99,28 @@ export interface WriteReceiptParams {
     lightRemainingAccounts: AccountMeta[];
 }
 
+export interface UpdateProtocolTierParams {
+    authority: PublicKey;
+    protocolOwner: PublicKey;
+    newTier: ProtocolTier;
+}
+
+/** Parameters for initialize_config — one-time post-deploy call. */
+export interface InitializeConfigParams {
+    /** Transaction fee payer. */
+    payer: PublicKey;
+    /** The authority pubkey to store in GlobalConfig (typically the KMS key). */
+    initialAuthority: PublicKey;
+}
+
+/** Parameters for update_authority — key rotation. */
+export interface UpdateAuthorityParams {
+    /** Current authority (must sign). */
+    authority: PublicKey;
+    /** New authority pubkey to store. */
+    newAuthority: PublicKey;
+}
+
 /** Compressed proof from Light Protocol RPC, matching on-chain AnchorCompressedProof. */
 export interface CompressedProof {
     a: number[];  // [u8; 32]

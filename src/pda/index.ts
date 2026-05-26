@@ -2,6 +2,7 @@ import type { PublicKey } from '@solana/web3.js';
 
 export { findIdentityPda, createIdentityPda } from './identity.js';
 export { findProtocolPda } from './protocol.js';
+export { findGlobalConfigPda } from './config.js';
 
 // Re-import for convenience function
 import { findIdentityPda } from './identity.js';
