@@ -23,22 +23,18 @@ import type { HeraldConfig } from '../types/config.js';
  * @example
  * ```typescript
  * import { ChannelUserClient } from '@herald-protocol/sdk/channels';
- * import { encryptTelegramId }  from '@herald-protocol/sdk/channels';
  *
  * const channelClient = new ChannelUserClient({ rpcUrl: '...' });
  *
  * // After user starts @HeraldBot in Telegram and gets their chat_id:
- * const { encrypted, hash, nonce } = await encryptTelegramId(
- *   chatId,         // e.g. "123456789"
+ * // Seal to the GATEWAY's X25519 pubkey so it can decrypt and deliver.
+ * const { instructions } = await channelClient.buildTelegramRegistrationTx(
  *   wallet.publicKey,
+ *   chatId,                // e.g. "123456789"
+ *   gatewayX25519Pubkey,   // 32-byte gateway key (same one the email path uses)
  * );
  *
- * const ix = await channelClient.registerTelegram({
- *   owner: wallet.publicKey,
- *   data:  { encryptedTelegramId: encrypted, telegramIdHash: hash, nonceTelegram: nonce },
- * });
- *
- * const tx = new Transaction().add(ix);
+ * const tx = new Transaction().add(...instructions);
  * await wallet.signAndSendTransaction(tx);
  * ```
  */
@@ -150,13 +146,20 @@ export class ChannelUserClient extends BaseClient {
      * Build a complete "register telegram" transaction.
      * Encrypts the chat_id and returns the instruction + expected hash.
      * Single transaction: user doesn't need to sign twice.
+     *
+     * The chat_id is sealed to the Herald Gateway's X25519 public key so the
+     * gateway can decrypt it to deliver notifications. It MUST NOT be sealed to
+     * the user's wallet key — the gateway could never open that.
+     *
+     * @param gatewayX25519Pubkey - Gateway's 32-byte X25519 public key (same key the email path uses).
      */
     async buildTelegramRegistrationTx(
         owner: PublicKey,
         chatId: string,
+        gatewayX25519Pubkey: Uint8Array,
     ): Promise<{ instructions: TransactionInstruction[]; expectedHash: Uint8Array }> {
-        const { encryptTelegramId } = await import('./encryption.js');
-        const { encrypted, hash, nonce } = await encryptTelegramId(chatId, owner);
+        const { encryptTelegramIdForGateway } = await import('./encryption.js');
+        const { encrypted, hash, nonce } = await encryptTelegramIdForGateway(chatId, gatewayX25519Pubkey);
 
         const ix = await this.registerTelegram({
             owner,
@@ -169,13 +172,19 @@ export class ChannelUserClient extends BaseClient {
     /**
      * Build a complete "register sms" transaction.
      * Encrypts the phone and returns the instruction + expected hash.
+     *
+     * The phone is sealed to the Herald Gateway's X25519 public key so the
+     * gateway can decrypt it to deliver notifications — not to the user's wallet.
+     *
+     * @param gatewayX25519Pubkey - Gateway's 32-byte X25519 public key (same key the email path uses).
      */
     async buildSmsRegistrationTx(
         owner: PublicKey,
         phoneE164: string,
+        gatewayX25519Pubkey: Uint8Array,
     ): Promise<{ instructions: TransactionInstruction[]; expectedHash: Uint8Array }> {
-        const { encryptPhone } = await import('./encryption.js');
-        const { encrypted, hash, nonce } = await encryptPhone(phoneE164, owner);
+        const { encryptPhoneForGateway } = await import('./encryption.js');
+        const { encrypted, hash, nonce } = await encryptPhoneForGateway(phoneE164, gatewayX25519Pubkey);
 
         const ix = await this.registerSms({
             owner,
