@@ -15,6 +15,7 @@ export default defineConfig({
         'light/index': 'src/light/index.ts',
         'channels/index': 'src/channels/index.ts',
         'notification-keys/index': 'src/notification-keys/index.ts',
+        'react/index': 'src/react/index.tsx',
     },
     format: ['cjs', 'esm'],
     dts: true,
@@ -26,6 +27,8 @@ export default defineConfig({
         '@solana/web3.js',
         '@coral-xyz/anchor',
         '@lightprotocol/stateless.js',
+        'react',
+        'react-dom',
     ],
     esbuildOptions(opts) {
         opts.target = 'es2022';
